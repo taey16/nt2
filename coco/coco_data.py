@@ -6,10 +6,10 @@ os.system('wget http://msvocds.blob.core.windows.net/annotations-1-0-3/captions_
 os.system('unzip captions_train-val2014.zip')
 """
 
+dataset_root = '/data2/coco'
 import json
-val  = json.load(open('annotations/captions_val2014.json', 'r'))
-train= json.load(open('annotations/captions_train2014.json', 'r'))
-dataset_root = '/storage/coco'
+val  = json.load(open('%s/annotations/captions_val2014.json' % dataset_root, 'r'))
+train= json.load(open('%s/annotations/captions_train2014.json' % dataset_root, 'r'))
 
 print val.keys()
 print val['info']

@@ -23,7 +23,7 @@ The json file has a dict that contains:
   such as in particular the 'split' it was assigned to.
 """
 
-import os
+import os, sys
 import json
 import argparse
 from random import shuffle, seed
@@ -198,6 +198,7 @@ def main(params):
     dset[i] = Ir
     if i % 1000 == 0:
       print 'processing %d/%d (%.2f%% done)' % (i, N, i*100.0/N)
+      sys.stdout.flush()
   f.close()
   print 'wrote ', params['output_h5']
 
@@ -222,17 +223,17 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser()
 
   # input json
-  parser.add_argument('--input_json', default='coco/coco_raw.json', help='input json file to process into hdf5')
+  parser.add_argument('--input_json', default='coco_raw.json', help='input json file to process into hdf5')
   parser.add_argument('--num_val', default=5000, type=int, help='number of images to assign to validation data (for CV etc)')
-  parser.add_argument('--output_json', default='data_256.json', help='output json file')
-  parser.add_argument('--output_h5', default='data_256.h5', help='output h5 file')
+  parser.add_argument('--output_json', default='data_292.json', help='output json file')
+  parser.add_argument('--output_h5', default='data_292.h5', help='output h5 file')
   
   # options
   parser.add_argument('--max_length', default=16, type=int, help='max length of a caption, in number of words. captions longer than this get clipped.')
-  parser.add_argument('--images_root', default='', help='root location in which images are stored, to be prepended to file_path in input json')
+  parser.add_argument('--images_root', default='/data2/coco/', help='root location in which images are stored, to be prepended to file_path in input json')
   parser.add_argument('--word_count_threshold', default=5, type=int, help='only words that occur more than this number of times will be put in vocab')
   parser.add_argument('--num_test', default=0, type=int, help='number of test images (to withold until very very end)')
-  parser.add_argument('--image_dim', default=256, type=int, help='size of image')
+  parser.add_argument('--image_dim', default=292, type=int, help='size of image')
 
   args = parser.parse_args()
   params = vars(args) # convert to ordinary dict
