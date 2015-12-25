@@ -85,7 +85,7 @@ function train(iter)
   end
   update_grad(finetune, learning_rate, cnn_learning_rate)
 
-  return losses, finetune
+  return losses, finetune, learning_rate, cnn_learning_rate
 end
 
 

@@ -91,6 +91,8 @@ cmd:option('-cnn_weight_decay', 0,
   'L2 weight decay just for the CNN')
 
 -- Evaluation/Checkpointing
+cmd:option('-train_samples', 123287 - 3200,
+  '# of samples in training set')
 cmd:option('-val_images_use', 3200, 
   'how many images to use when periodically evaluating the validation loss? (-1 = all)')
 cmd:option('-save_checkpoint_every', 2500, 

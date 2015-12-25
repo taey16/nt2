@@ -25,6 +25,7 @@ paths.dofile('train.lua')
 paths.dofile('test.lua')
 
 local iter = 0
+local num_of_batches = opt.train_samples / opt.batch_size
 local loss0
 optim_state = {}
 cnn_optim_state = {}
@@ -42,10 +43,12 @@ else iter = iter+1 end
 
 while true do  
   local elapsed_trn = tm:time().real
-  local losses_trn, finetune_cnn = train(iter)
+  local losses_trn, finetune_cnn, lr, cnn_lr = train(iter)
   io.flush(print(string.format(
-    'iter %d trn loss: %f, finetune: %s, %.4f', 
-      iter, losses_trn.total_loss, 
+    '%d/%d trn loss: %f, lr: %.8f, cnn_lr: %.8f finetune: %s, %.3f', 
+      iter, num_of_batches, 
+      lr, cnn_lr, 
+      losses_trn.total_loss, 
       tostring(finetune_cnn), tm:time().real - elapsed_trn
   )))
   if iter % opt.losses_log_every == 0 then 
@@ -58,7 +61,7 @@ while true do
     local losses_val, predictions_val, lang_stats = test(iter)
     print(lang_stats)
     print(string.format(
-      'validation loss: %.6f, %.2f', 
+      'validation loss: %.6f, %.3f', 
       losses_val, tm:time().real - elapsed))
     val_loss_history[iter] = losses_val
     if lang_stats then
