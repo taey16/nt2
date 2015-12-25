@@ -3,8 +3,8 @@ local use_vgg = false
 local input_h5 = 'coco/data_292.h5'
 local input_json = 'coco/data_292.json'
 local torch_model= 
-  --'/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.t7'
-  '/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7'
+  '/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.t7'
+  --'/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7'
 local image_size = 292
 local crop_size = 256
 local start_from = 
@@ -12,9 +12,9 @@ local start_from =
 local rnn_size = 512
 local input_encoding_size = 512
 local finetune_cnn_after = 0
-local experiment_id = '_inception_finetune'
+local experiment_id = '_inception7_bn'
 local gpuid = 0
-local test_initialization = false
+local test_initialization = true
 
 cmd = torch.CmdLine()
 cmd:text()

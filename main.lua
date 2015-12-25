@@ -10,8 +10,8 @@ require 'misc.DataLoader'
 utils = require 'misc.utils'
 net_utils = require 'misc.net_utils'
 
-opt = paths.dofile('opt/opt_coco_vgg.lua')
---opt = paths.dofile('opt/opt_coco_inception7.lua')
+--opt = paths.dofile('opt/opt_coco_vgg.lua')
+opt = paths.dofile('opt/opt_coco_inception7.lua')
 
 torch.manualSeed(opt.seed)
 torch.setdefaulttensortype('torch.FloatTensor')
