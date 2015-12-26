@@ -7,10 +7,10 @@ require 'cudnn'
 require 'nngraph'
 local path = require 'pl.path'
 local utils = require 'misc.utils'
-require 'misc.DataLoader'
-require 'misc.LanguageModel'
 local net_utils = require 'misc.net_utils'
+require 'misc.DataLoader'
 require 'misc.optim_updates'
+require 'models.LanguageModel'
 require 'optim'
 
 
