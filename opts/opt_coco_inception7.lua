@@ -1,7 +1,7 @@
 
 local use_vgg = false
-local input_h5 = '/data2/coco/data_292.h5'
-local input_json = '/data2/coco/data_292.json'
+local input_h5 = '/storage/coco/data_292.h5'
+local input_json = '/storage/coco/data_292.json'
 local torch_model= 
   '/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.t7'
   --'/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7'
@@ -13,11 +13,11 @@ local start_from =
 local rnn_size = 512
 local input_encoding_size = 512
 local finetune_cnn_after = -1
-local experiment_id = '_inception7_bn'
+local experiment_id = '_inception7_bn_bs4'
 local gpuid = 0
 local test_initialization = false
 
-local batch_size = 32
+local batch_size = 4
 
 cmd = torch.CmdLine()
 cmd:text()
@@ -98,9 +98,9 @@ cmd:option('-train_samples', 123287 - 3200,
   '# of samples in training set')
 cmd:option('-val_images_use', 3200, 
   'how many images to use when periodically evaluating the validation loss? (-1 = all)')
-cmd:option('-save_checkpoint_every', math.floor(3752/2.0), 
+cmd:option('-save_checkpoint_every', math.floor(7505*2.0*2.0/2.0), 
   'how often to save a model checkpoint?')
-cmd:option('-checkpoint_path', '/data2/coco/checkpoints', 
+cmd:option('-checkpoint_path', '/storage/coco/checkpoints', 
   'folder to save checkpoints into (empty = this folder)')
 cmd:option('-language_eval', 1, 
   'Evaluate language as well (1 = yes, 0 = no)? BLEU/CIDEr/METEOR/ROUGE_L? requires coco-caption code from Github.')
