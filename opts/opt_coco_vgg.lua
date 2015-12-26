@@ -1,7 +1,7 @@
 
 local use_vgg = true
-local input_h5 = 'coco/data_256.h5'
-local input_json = 'coco/data_256.json'
+local input_h5 = '/storage/coco/data_256.h5'
+local input_json = '/storage/coco/data_256.json'
 local torch_model= 
   '/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7'
 local image_size = 256
