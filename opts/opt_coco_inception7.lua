@@ -12,10 +12,12 @@ local start_from =
   --'model_id_inception7.t7'
 local rnn_size = 512
 local input_encoding_size = 512
-local finetune_cnn_after = 7500 
-local experiment_id = '_inception7_finetune0'
+local finetune_cnn_after = -1
+local experiment_id = '_inception7_bn'
 local gpuid = 0
 local test_initialization = false
+
+local batch_size = 32
 
 cmd = torch.CmdLine()
 cmd:text()
@@ -52,7 +54,7 @@ cmd:option('-input_encoding_size',input_encoding_size,
 -- Optimization: General
 cmd:option('-max_iters', -1, 
   'max number of iterations to run for (-1 = run forever)')
-cmd:option('-batch_size', 4,
+cmd:option('-batch_size', batch_size,
   'what is the batch size in number of images per batch? (there will be x seq_per_img sentences)')
 cmd:option('-grad_clip',0.1,
   'clip gradients at this value (note should be lower than usual 5 because we normalize grads by both batch and seq_length)')
@@ -98,7 +100,7 @@ cmd:option('-val_images_use', 3200,
   'how many images to use when periodically evaluating the validation loss? (-1 = all)')
 cmd:option('-save_checkpoint_every', 2500, 
   'how often to save a model checkpoint?')
-cmd:option('-checkpoint_path', './checkpoints', 
+cmd:option('-checkpoint_path', '/data2/coco/checkpoints', 
   'folder to save checkpoints into (empty = this folder)')
 cmd:option('-language_eval', 1, 
   'Evaluate language as well (1 = yes, 0 = no)? BLEU/CIDEr/METEOR/ROUGE_L? requires coco-caption code from Github.')
@@ -119,6 +121,10 @@ cmd:option('-gpuid', gpuid,
 cmd:text()
 
 local opt = cmd:parse(arg)
+
+opt.checkpoint_path = paths.concat(opt.checkpoint_path, opt.experiment_id)
+os.execute('mkdir -p '..opt.checkpoint_path)
+print('===> checkpoint path: '..opt.checkpoint_paath)
 
 return opt
 
