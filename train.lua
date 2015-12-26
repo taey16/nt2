@@ -14,7 +14,8 @@ require 'models.LanguageModel'
 require 'optim'
 
 
-local opt = paths.dofile('opts/opt_coco_inception7.lua')
+--local opt = paths.dofile('opts/opt_coco_inception7.lua')
+local opt = paths.dofile('opts/opt_coco_vgg.lua')
 torch.manualSeed(opt.seed)
 torch.setdefaulttensortype('torch.FloatTensor')
 cutorch.manualSeed(opt.seed)
@@ -117,7 +118,7 @@ local function eval_split(split, evalopt)
   while true do
 
     -- fetch a batch of data
-    local data = loader:getBatch{batch_size = opt.batch_size, split = split, seq_per_img = opt.seq_per_img}
+    local data = loader:getBatch{batch_size = opt.batch_size, image_size = opt.image_size, split = split, seq_per_img = opt.seq_per_img}
     if opt.use_vgg then
       data.images = 
         -- preprocess in place, and don't augment
@@ -182,7 +183,11 @@ local function lossFun(finetune_cnn)
   -- Forward pass
   -----------------------------------------------------------------------------
   -- get batch of data  
-  local data = loader:getBatch{batch_size = opt.batch_size, split = 'train', seq_per_img = opt.seq_per_img}
+  local data = loader:getBatch{
+    batch_size = opt.batch_size, 
+    image_size = opt.image_size, 
+    split = 'train', 
+    seq_per_img = opt.seq_per_img}
   if opt.use_vgg then
     -- preproces in-place, data augment
     data.images = 
@@ -192,7 +197,7 @@ local function lossFun(finetune_cnn)
     data.images = 
       net_utils.preprocess_inception7(data.images, opt.crop_size, true, opt.gpuid >= 0)
   end
-  -- data.images: Nx3x224x224 
+  -- data.images: Nx3xopt.image_sizexopt.image_size
   -- data.seq: LxM where L is sequence length upper bound, and M = N*seq_per_img
 
   -- forward the ConvNet on images (most work happens here)
@@ -234,8 +239,10 @@ local function lossFun(finetune_cnn)
   return losses
 end
 
-local logger_trn= optim.Logger(paths.concat(opt.checkpoint_path, 'train.log'))
-local logger_tst = optim.Logger(paths.concat(opt.checkpoint_path, 'test.log'))
+local logger_trn = 
+  optim.Logger(paths.concat(opt.checkpoint_path, 'train.log'))
+local logger_tst = 
+  optim.Logger(paths.concat(opt.checkpoint_path, 'test.log'))
 
 -------------------------------------------------------------------------------
 -- Main loop
@@ -260,7 +267,9 @@ while true do
 
   -- eval loss/gradient
   local losses = lossFun(finetune)
-  if iter % opt.losses_log_every == 0 then loss_history[iter] = losses.total_loss end
+  if iter % opt.losses_log_every == 0 then 
+    loss_history[iter] = losses.total_loss 
+  end
 
   -- decay the learning rate for both LM and CNN
   local learning_rate = opt.learning_rate
@@ -306,7 +315,7 @@ while true do
   local epoch = iter * 1.0 / number_of_batches
   io.flush(print(string.format(
     '%d/%d = %.2f trn loss: %f, lr: %.8f, cnn_lr: %.8f, finetune: %s, %.3f', 
-    iter, number_of_batches, iter / number_of_batches,
+    iter, number_of_batches, epoch,
     losses.total_loss, 
     learning_rate, cnn_learning_rate, 
     tostring(finetune_cnn), elapsed_trn
@@ -334,7 +343,8 @@ while true do
       val_lang_stats_history[iter] = lang_stats
     end
 
-    local checkpoint_path = path.join(opt.checkpoint_path, 'model_id' .. opt.id)
+    local checkpoint_path = 
+      path.join(opt.checkpoint_path, 'model_id' .. opt.id)
 
     -- write a (thin) json report
     local checkpoint = {}
@@ -399,3 +409,4 @@ while true do
   if opt.max_iters > 0 and iter >= opt.max_iters then break end -- stopping criterion
 
 end
+

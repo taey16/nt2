@@ -7,15 +7,16 @@ local torch_model=
 local image_size = 256
 local crop_size = 224
 local start_from = 
- 'model_id_vgg16.t7'
+  ''
+  --'model_id_vgg16.t7'
 local rnn_size = 512
 local input_encoding_size = 512
-local finetune_cnn_after = 0
-local experiment_id = '_vgg_finetune'
+local finetune_cnn_after = -1
+local experiment_id = '_vgg_bs16_encode512'
 local gpuid = 1
-local test_initialization = true
+local test_initialization = false
 
-local batch_size = 4
+local batch_size = 16
 
 cmd = torch.CmdLine()
 cmd:text()
@@ -92,9 +93,11 @@ cmd:option('-cnn_weight_decay', 0,
   'L2 weight decay just for the CNN')
 
 -- Evaluation/Checkpointing
+cmd:option('-train_samples', 123287 - 3200,
+  '# of samples in training set')
 cmd:option('-val_images_use', 3200, 
   'how many images to use when periodically evaluating the validation loss? (-1 = all)')
-cmd:option('-save_checkpoint_every', 2500, 
+cmd:option('-save_checkpoint_every', math.floor(7505/4.0), 
   'how often to save a model checkpoint?')
 cmd:option('-checkpoint_path', '/storage/coco/checkpoints', 
   'folder to save checkpoints into (empty = this folder)')
