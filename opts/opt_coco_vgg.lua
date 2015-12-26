@@ -15,6 +15,8 @@ local experiment_id = '_vgg_finetune'
 local gpuid = 1
 local test_initialization = true
 
+local batch_size = 4
+
 cmd = torch.CmdLine()
 cmd:text()
 cmd:text('Train an Image Captioning model')
@@ -94,7 +96,7 @@ cmd:option('-val_images_use', 3200,
   'how many images to use when periodically evaluating the validation loss? (-1 = all)')
 cmd:option('-save_checkpoint_every', 2500, 
   'how often to save a model checkpoint?')
-cmd:option('-checkpoint_path', './checkpoints', 
+cmd:option('-checkpoint_path', '/storage/coco/checkpoints', 
   'folder to save checkpoints into (empty = this folder)')
 cmd:option('-language_eval', 1, 
   'Evaluate language as well (1 = yes, 0 = no)? BLEU/CIDEr/METEOR/ROUGE_L? requires coco-caption code from Github.')
@@ -115,6 +117,10 @@ cmd:option('-gpuid', gpuid,
 cmd:text()
 
 local opt = cmd:parse(arg)
+
+opt.checkpoint_path = paths.concat(opt.checkpoint_path, opt.id)
+os.execute('mkdir -p '..opt.checkpoint_path)
+print('===> checkpoint path: '..opt.checkpoint_path)
 
 return opt
 
