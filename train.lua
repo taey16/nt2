@@ -2,6 +2,7 @@
 paths.dofile('lossFun.lua')
 require 'misc.optim_updates'
 
+
 -- flatten and prepare all model parameters to a single vector. 
 -- Keep CNN params separate in case we want to try to get fancy with different optims on LM/CNN
 params, grad_params = protos.lm:getParameters()
@@ -10,7 +11,6 @@ print('total number of parameters in LM: ', params:nElement())
 print('total number of parameters in CNN: ', cnn_params:nElement())
 assert(params:nElement() == grad_params:nElement())
 assert(cnn_params:nElement() == cnn_grad_params:nElement())
-
 
 local function lr_policy(iter)
   -- decay the learning rate for both LM and CNN

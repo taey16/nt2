@@ -3,18 +3,19 @@ local use_vgg = false
 local input_h5 = 'coco/data_292.h5'
 local input_json = 'coco/data_292.json'
 local torch_model= 
-  '/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.t7'
-  --'/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7'
+  --'/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.t7'
+  '/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7'
 local image_size = 292
 local crop_size = 256
 local start_from = 
- 'model_id_inception7.t7'
+  ''
+  --'model_id_inception7.t7'
 local rnn_size = 512
 local input_encoding_size = 512
-local finetune_cnn_after = 0
+local finetune_cnn_after = 60000
 local experiment_id = '_inception7_bn'
 local gpuid = 0
-local test_initialization = true
+local test_initialization = false
 
 cmd = torch.CmdLine()
 cmd:text()
@@ -84,7 +85,7 @@ cmd:option('-cnn_optim','adam',
 cmd:option('-cnn_optim_alpha',0.8,
   'alpha for momentum of CNN')
 cmd:option('-cnn_optim_beta',0.999,
-  'alpha for momentum of CNN')
+  'beta for momentum of CNN')
 cmd:option('-cnn_learning_rate',1e-5,
   'learning rate for the CNN')
 cmd:option('-cnn_weight_decay', 0, 

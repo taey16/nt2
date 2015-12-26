@@ -10,8 +10,10 @@ function net_utils.build_inception_cnn(opt)
   local model_filename = utils.getopt(opt, 'model_filename', 
     '/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7')
   local encoding_size = utils.getopt(opt, 'encoding_size', 512)
+  print('===> Loading pre-trained inception7 model from: '..model_filename)
   local original_model = torch.load(model_filename)
   local vision_encoder = original_model:get(1)
+  --local vision_encoder = original_model:get(1):get(1)
   local cnn_part = nn.Sequential()
   cnn_part:add(vision_encoder)
   cnn_part:add(nn.View(1024))
@@ -19,7 +21,7 @@ function net_utils.build_inception_cnn(opt)
   cnn_part:add(cudnn.ReLU(true))
 
   print(cnn_part)
-  print('===> Loading pre-trained inception7 model')
+  print('===> Complete pre-trained inception7 model from: '..model_filename)
   return cnn_part 
 end
 

@@ -27,6 +27,7 @@ paths.dofile('test.lua')
 local iter = 0
 local num_of_batches = opt.train_samples / opt.batch_size
 local loss0
+local avg_loss_trn = 0
 optim_state = {}
 cnn_optim_state = {}
 loss_history = {}
@@ -44,11 +45,12 @@ else iter = iter+1 end
 while true do  
   local elapsed_trn = tm:time().real
   local losses_trn, finetune_cnn, lr, cnn_lr = train(iter)
+  avg_loss_trn = 0.99 * avg_loss_trn + 0.01 * losses_trn.total_loss
   io.flush(print(string.format(
-    '%d/%d trn loss: %f, lr: %.8f, cnn_lr: %.8f finetune: %s, %.3f', 
+    '%d/%d trn loss: %f(%f), lr: %.8f, cnn_lr: %.8f finetune: %s, %.3f', 
       iter, num_of_batches, 
+      losses_trn.total_loss, avg_loss_trn,
       lr, cnn_lr, 
-      losses_trn.total_loss, 
       tostring(finetune_cnn), tm:time().real - elapsed_trn
   )))
   if iter % opt.losses_log_every == 0 then 
