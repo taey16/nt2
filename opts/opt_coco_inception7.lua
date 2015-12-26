@@ -98,7 +98,7 @@ cmd:option('-train_samples', 123287 - 3200,
   '# of samples in training set')
 cmd:option('-val_images_use', 3200, 
   'how many images to use when periodically evaluating the validation loss? (-1 = all)')
-cmd:option('-save_checkpoint_every', 2500, 
+cmd:option('-save_checkpoint_every', math.floor(3752/2.0), 
   'how often to save a model checkpoint?')
 cmd:option('-checkpoint_path', '/data2/coco/checkpoints', 
   'folder to save checkpoints into (empty = this folder)')
@@ -122,9 +122,9 @@ cmd:text()
 
 local opt = cmd:parse(arg)
 
-opt.checkpoint_path = paths.concat(opt.checkpoint_path, opt.experiment_id)
+opt.checkpoint_path = paths.concat(opt.checkpoint_path, opt.id)
 os.execute('mkdir -p '..opt.checkpoint_path)
-print('===> checkpoint path: '..opt.checkpoint_paath)
+print('===> checkpoint path: '..opt.checkpoint_path)
 
 return opt
 
