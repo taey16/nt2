@@ -1,7 +1,7 @@
 
 local use_vgg = false
-local input_h5 = 'coco/data_292.h5'
-local input_json = 'coco/data_292.json'
+local input_h5 = '/data2/coco/data_292.h5'
+local input_json = '/data2/coco/data_292.json'
 local torch_model= 
   '/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.t7'
   --'/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7'
@@ -13,7 +13,7 @@ local start_from =
 local rnn_size = 512
 local input_encoding_size = 512
 local finetune_cnn_after = 7500 
-local experiment_id = '_inception7_finetune7500'
+local experiment_id = '_inception7_finetune0'
 local gpuid = 0
 local test_initialization = false
 
@@ -44,7 +44,7 @@ cmd:option('-start_from', start_from,
   'path to a model checkpoint to initialize model weights from. Empty = don\'t')
 
 -- Model settings
-cmd:option('-rnn_size',rnn_size,
+cmd:option('-rnn_size', rnn_size,
   'size of the rnn in number of hidden nodes in each layer')
 cmd:option('-input_encoding_size',input_encoding_size,
   'the encoding size of each token in the vocabulary, and the image.')

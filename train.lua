@@ -385,13 +385,13 @@ while true do
       ['iter'] = iter,
       ['epoch']= epoch,
       ['loss'] = val_loss,
-      ['CIDEr']  = lang_stats['CIDEr']
-      ['ROUGE_L']= lang_stats['ROUGE_L']
-      ['METEOR'] = lang_stats['METEOR']
-      ['Bleu_1'] = lang_stats['Bleu_1']
-      ['Bleu_2'] = lang_stats['Bleu_2']
-      ['Bleu_3'] = lang_stats['Bleu_3']
-      ['Bleu_4'] = lang_stats['Bleu_4']
+      ['CIDEr']  = lang_stats['CIDEr'],
+      ['ROUGE_L']= lang_stats['ROUGE_L'],
+      ['METEOR'] = lang_stats['METEOR'],
+      ['Bleu_1'] = lang_stats['Bleu_1'],
+      ['Bleu_2'] = lang_stats['Bleu_2'],
+      ['Bleu_3'] = lang_stats['Bleu_3'],
+      ['Bleu_4'] = lang_stats['Bleu_4'],
     }
   end
 
