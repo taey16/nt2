@@ -5,7 +5,6 @@ require 'cutorch'
 require 'cunn'
 require 'cudnn'
 require 'nngraph'
--- local imports
 local path = require 'pl.path'
 local utils = require 'misc.utils'
 require 'misc.DataLoader'
@@ -14,22 +13,17 @@ local net_utils = require 'misc.net_utils'
 require 'misc.optim_updates'
 require 'optim'
 
-local opt = paths.dofile('opts/opt_coco_inception7.lua')
 
+local opt = paths.dofile('opts/opt_coco_inception7.lua')
 torch.manualSeed(opt.seed)
 torch.setdefaulttensortype('torch.FloatTensor')
 cutorch.manualSeed(opt.seed)
 
--------------------------------------------------------------------------------
--- Create the Data Loader instance
--------------------------------------------------------------------------------
+
 local loader = DataLoader{h5_file = opt.input_h5, json_file = opt.input_json}
 
--------------------------------------------------------------------------------
--- Initialize the networks
--------------------------------------------------------------------------------
-local protos = {}
 
+local protos = {}
 if string.len(opt.start_from) > 0 then
   -- load protos from file
   print('initializing weights from ' .. opt.start_from)
@@ -54,7 +48,6 @@ else
   protos.lm = nn.LanguageModel(lmOpt)
   -- initialize the ConvNet
   local cnn_backend = opt.backend
-  if opt.gpuid == -1 then cnn_backend = 'nn' end -- override to nn if gpu is disabled
   if opt.use_vgg then
     require 'loadcaffe'
     local cnn_backend = opt.backend
