@@ -1,23 +1,28 @@
 
-local use_vgg = false
 local input_h5 = '/storage/coco/data_292.h5'
 local input_json = '/storage/coco/data_292.json'
+
+local use_vgg = false
 local torch_model= 
   --'/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.t7'
   '/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7'
 local image_size = 292
 local crop_size = 256
-local start_from = 
-  ''
-  --'model_id_inception7.t7'
 local rnn_size = 512
 local input_encoding_size = 512
-local finetune_cnn_after = -1
-local experiment_id = '_inception7_bs16_encode512'
-local gpuid = 0
-local test_initialization = false
-
 local batch_size = 16
+
+local finetune_cnn_after = 0
+local learning_rate = 4e-5
+local cnn_learning_rate = 1e-6
+local cnn_weight_decay = 0.0000001
+
+local start_from = 
+  '/storage/coco/checkpoints/_inception7_bs16_encode512/model_id_inception7_bs16_encode512.t7'
+local experiment_id = 
+  '_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5'
+local gpuid = 0
+local test_initialization = true
 
 cmd = torch.CmdLine()
 cmd:text()
@@ -68,7 +73,7 @@ cmd:option('-seq_per_img',5,
 -- Optimization: for the Language Model
 cmd:option('-optim','adam',
   'what update to use? rmsprop|sgd|sgdmom|adagrad|adam')
-cmd:option('-learning_rate',4e-4,
+cmd:option('-learning_rate', learning_rate,
   'learning rate')
 cmd:option('-learning_rate_decay_start', -1, 
   'at what iteration to start decaying learning rate? (-1 = dont)')
@@ -88,9 +93,9 @@ cmd:option('-cnn_optim_alpha',0.8,
   'alpha for momentum of CNN')
 cmd:option('-cnn_optim_beta',0.999,
   'alpha for momentum of CNN')
-cmd:option('-cnn_learning_rate',1e-5,
+cmd:option('-cnn_learning_rate', cnn_learning_rate,
   'learning rate for the CNN')
-cmd:option('-cnn_weight_decay', 0, 
+cmd:option('-cnn_weight_decay', cnn_weight_decay, 
   'L2 weight decay just for the CNN')
 
 -- Evaluation/Checkpointing
@@ -98,14 +103,14 @@ cmd:option('-train_samples', 123287 - 3200,
   '# of samples in training set')
 cmd:option('-val_images_use', 3200, 
   'how many images to use when periodically evaluating the validation loss? (-1 = all)')
-cmd:option('-save_checkpoint_every', math.floor(7505/4.0), 
+cmd:option('-save_checkpoint_every', math.floor(7505/8.0), 
   'how often to save a model checkpoint?')
 cmd:option('-checkpoint_path', '/storage/coco/checkpoints', 
   'folder to save checkpoints into (empty = this folder)')
 cmd:option('-language_eval', 1, 
   'Evaluate language as well (1 = yes, 0 = no)? BLEU/CIDEr/METEOR/ROUGE_L? requires coco-caption code from Github.')
 cmd:option('-losses_log_every', 25, 
-  'How often do we snapshot losses, for inclusion in the progress dump? (0 = disable)')
+  'How often do we snapshot losses (in loss_history), for inclusion in the progress dump? (0 = disable)')
 cmd:option('-test_initialization', test_initialization,
   'testing initial model')
 

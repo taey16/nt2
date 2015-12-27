@@ -14,8 +14,8 @@ require 'models.LanguageModel'
 require 'optim'
 
 
---local opt = paths.dofile('opts/opt_coco_inception7.lua')
-local opt = paths.dofile('opts/opt_coco_vgg.lua')
+local opt = paths.dofile('opts/opt_coco_inception7.lua')
+--local opt = paths.dofile('opts/opt_coco_vgg.lua')
 torch.manualSeed(opt.seed)
 torch.setdefaulttensortype('torch.FloatTensor')
 cutorch.manualSeed(opt.seed)
@@ -35,6 +35,10 @@ if string.len(opt.start_from) > 0 then
   for k,v in pairs(lm_modules) do net_utils.unsanitize_gradients(v) end
   protos.crit = nn.LanguageModelCriterion() -- not in checkpoints, create manually
   protos.expander = nn.FeatExpander(opt.seq_per_img) -- not in checkpoints, create manually
+  print(protos.cnn)
+  print(protos.lm)
+  print(protos.expander)
+  print(protos.crit)
 else
   -- create protos from scratch
   -- intialize language model
