@@ -55,6 +55,8 @@ cmd:option('-rnn_size', rnn_size,
   'size of the rnn in number of hidden nodes in each layer')
 cmd:option('-input_encoding_size',input_encoding_size,
   'the encoding size of each token in the vocabulary, and the image.')
+cmd:option('-num_rnn_layers', 1,
+  'number of stacks of rnn layers')
 
 -- Optimization: General
 cmd:option('-max_iters', -1, 

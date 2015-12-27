@@ -46,7 +46,7 @@ else
   lmOpt.vocab_size = loader:getVocabSize()
   lmOpt.input_encoding_size = opt.input_encoding_size
   lmOpt.rnn_size = opt.rnn_size
-  lmOpt.num_layers = 1
+  lmOpt.num_layers = opt.num_rnn_layers
   lmOpt.dropout = opt.drop_prob_lm
   lmOpt.seq_length = loader:getSeqLength()
   lmOpt.batch_size = opt.batch_size * opt.seq_per_img
