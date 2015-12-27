@@ -8,21 +8,24 @@ local torch_model=
   '/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7'
 local image_size = 292
 local crop_size = 256
-local rnn_size = 512
-local input_encoding_size = 512
+local rnn_size = 384
+local num_rnn_layers = 2
+local input_encoding_size = 384
 local batch_size = 16
 
-local finetune_cnn_after = 0
-local learning_rate = 4e-5
-local cnn_learning_rate = 1e-6
+local finetune_cnn_after = -1
+local learning_rate = 4e-4
+local cnn_learning_rate = 1e-5
 local cnn_weight_decay = 0.0000001
 
 local start_from = 
-  '/storage/coco/checkpoints/_inception7_bs16_encode512/model_id_inception7_bs16_encode512.t7'
+  ''
+  --'/storage/coco/checkpoints/_inception7_bs16_encode512/model_id_inception7_bs16_encode512.t7'
 local experiment_id = 
-  '_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5'
+  '_inception7_bs16_encode256_layer2'
+  --'_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5'
 local gpuid = 0
-local test_initialization = true
+local test_initialization = false
 
 cmd = torch.CmdLine()
 cmd:text()
@@ -55,7 +58,7 @@ cmd:option('-rnn_size', rnn_size,
   'size of the rnn in number of hidden nodes in each layer')
 cmd:option('-input_encoding_size',input_encoding_size,
   'the encoding size of each token in the vocabulary, and the image.')
-cmd:option('-num_rnn_layers', 1,
+cmd:option('-num_rnn_layers', num_rnn_layers,
   'number of stacks of rnn layers')
 
 -- Optimization: General
