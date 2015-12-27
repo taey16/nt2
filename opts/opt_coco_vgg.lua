@@ -14,7 +14,6 @@ local input_encoding_size = 512
 local finetune_cnn_after = -1
 local experiment_id = '_vgg_bs16_encode512'
 local gpuid = 1
-local test_initialization = false
 
 local batch_size = 16
 

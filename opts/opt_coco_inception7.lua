@@ -25,7 +25,6 @@ local experiment_id =
   '_inception7_bs16_encode256_layer2'
   --'_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5'
 local gpuid = 0
-local test_initialization = false
 
 cmd = torch.CmdLine()
 cmd:text()
@@ -108,7 +107,7 @@ cmd:option('-train_samples', 123287 - 3200,
   '# of samples in training set')
 cmd:option('-val_images_use', 3200, 
   'how many images to use when periodically evaluating the validation loss? (-1 = all)')
-cmd:option('-save_checkpoint_every', math.floor(7505/8.0), 
+cmd:option('-save_checkpoint_every', math.floor(7505/4.0), 
   'how often to save a model checkpoint?')
 cmd:option('-checkpoint_path', '/storage/coco/checkpoints', 
   'folder to save checkpoints into (empty = this folder)')
