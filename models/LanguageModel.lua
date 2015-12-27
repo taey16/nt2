@@ -99,7 +99,10 @@ function layer:sample(imgs, opt)
   local sample_max = utils.getopt(opt, 'sample_max', 1)
   local beam_size = utils.getopt(opt, 'beam_size', 1)
   local temperature = utils.getopt(opt, 'temperature', 1.0)
-  if sample_max == 1 and beam_size > 1 then return self:sample_beam(imgs, opt) end -- indirection for beam search
+  -- indirection for beam search
+  if sample_max == 1 and beam_size > 1 then 
+    return self:sample_beam(imgs, opt) 
+  end
 
   local batch_size = imgs:size(1)
   self:_createInitState(batch_size)

@@ -7,7 +7,7 @@ require 'loadcaffe'
 local utils = require 'misc.utils'
 require 'misc.DataLoader'
 require 'misc.DataLoaderRaw'
-require 'misc.LanguageModel'
+require 'models.LanguageModel'
 local net_utils = require 'misc.net_utils'
 
 -------------------------------------------------------------------------------
@@ -20,8 +20,10 @@ cmd:text()
 cmd:text('Options')
 
 -- Input paths
-cmd:option('-model','','path to model to evaluate')
+cmd:option('-model','/storage/coco/checkpoints/_inception7_bs16_encode512/model_id_inception7_bs16_encode512.t7','path to model to evaluate')
 -- Basic options
+cmd:option('-image_size', 292, 'size of input image')
+cmd:option('-crop_size', 256, 'size of input image')
 cmd:option('-batch_size', 1, 'if > 0 then overrule, otherwise load from checkpoint.')
 cmd:option('-num_images', 100, 'how many images to use when periodically evaluating the loss? (-1 = all)')
 cmd:option('-language_eval', 0, 'Evaluate language as well (1 = yes, 0 = no)? BLEU/CIDEr/METEOR/ROUGE_L? requires coco-caption code from Github.')
@@ -33,8 +35,8 @@ cmd:option('-sample_max', 1, '1 = sample argmax words. 0 = sample from distribut
 cmd:option('-beam_size', 2, 'used when sample_max = 1, indicates number of beams in beam search. Usually 2 or 3 works well. More is not better. Set this to 1 for faster runtime but a bit worse performance.')
 cmd:option('-temperature', 1.0, 'temperature when sampling from distributions (i.e. when sample_max = 0). Lower = "safer" predictions.')
 -- For evaluation on a folder of images:
-cmd:option('-image_folder', '', 'If this is nonempty then will predict on the images in this folder path')
-cmd:option('-image_root', '', 'In case the image paths have to be preprended with a root path to an image folder')
+cmd:option('-image_folder', 'test2015', 'If this is nonempty then will predict on the images in this folder path')
+cmd:option('-image_root', '/storage/coco/', 'In case the image paths have to be preprended with a root path to an image folder')
 -- For evaluation on MSCOCO images from some split:
 cmd:option('-input_h5','','path to the h5file containing the preprocessed dataset. empty = fetch from model checkpoint.')
 cmd:option('-input_json','','path to the json file containing additional info and vocab. empty = fetch from model checkpoint.')
@@ -59,7 +61,7 @@ if opt.gpuid >= 0 then
   require 'cunn'
   if opt.backend == 'cudnn' then require 'cudnn' end
   cutorch.manualSeed(opt.seed)
-  cutorch.setDevice(opt.gpuid + 1) -- note +1 because lua is 1-indexed
+  --cutorch.setDevice(opt.gpuid + 1) -- note +1 because lua is 1-indexed
 end
 
 -------------------------------------------------------------------------------
@@ -113,8 +115,20 @@ local function eval_split(split, evalopt)
   while true do
 
     -- fetch a batch of data
-    local data = loader:getBatch{batch_size = opt.batch_size, split = split, seq_per_img = opt.seq_per_img}
-    data.images = net_utils.prepro(data.images, false, opt.gpuid >= 0) -- preprocess in place, and don't augment
+    local data = loader:getBatch{
+      batch_size = opt.batch_size, 
+      image_size = opt.image_size, 
+      split = split, 
+      seq_per_img = opt.seq_per_img
+    }
+    -- preprocess in place, and don't augment
+    if use_vgg then
+      data.images = net_utils.prepro(
+        data.images, opt.crop_size, false, opt.gpuid >= 0)
+    else
+      data.images = net_utils.preprocess_inception7(
+        data.images, opt.crop_size, false, opt.gpuid >= 0)
+    end
     n = n + data.images:size(1)
 
     -- forward the model to get loss
@@ -180,3 +194,4 @@ if opt.dump_json == 1 then
   -- dump the json
   utils.write_json('vis/vis.json', split_predictions)
 end
+
