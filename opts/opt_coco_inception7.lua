@@ -126,6 +126,8 @@ cmd:option('-seed', 123,
   'random number generator seed to use')
 cmd:option('-gpuid', gpuid, 
   'which gpu to use. -1 = use CPU')
+cmd:option('-display', 5,
+  'display interval for train steps')
 
 cmd:text()
 

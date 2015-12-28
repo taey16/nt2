@@ -315,15 +315,17 @@ while true do
     end
   end
 
-  local elapsed_trn = tm:time().real - start_trn
-  local epoch = iter * 1.0 / number_of_batches
-  io.flush(print(string.format(
-    '%d/%d = %.2f trn loss: %f, lr: %.8f, cnn_lr: %.8f, finetune: %s, %.3f', 
-    iter, number_of_batches, epoch,
-    losses.total_loss, 
-    learning_rate, cnn_learning_rate, 
-    tostring(finetune_cnn), elapsed_trn
-  )))
+  if iter % opt.display == 0 then
+    local elapsed_trn = tm:time().real - start_trn
+    local epoch = iter * 1.0 / number_of_batches
+    io.flush(print(string.format(
+      '%d/%d: %.2f, trn loss: %f, lr: %.8f, cnn_lr: %.8f, finetune: %s, %.3f', 
+      iter, number_of_batches, epoch,
+      losses.total_loss, 
+      learning_rate, cnn_learning_rate, 
+      tostring(finetune_cnn), elapsed_trn
+    )))
+  end
 
   -- save checkpoint once in a while (or on final iteration)
   if (iter % opt.save_checkpoint_every == 0 or iter == opt.max_iters) then
