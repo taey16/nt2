@@ -65,6 +65,38 @@ function net_utils.build_cnn(cnn, opt)
 end
 
 
+function net_utils.preprocess_inception7_predict(imgs, crop_size, data_augment, on_gpu)
+  assert(data_augment ~= nil, 'pass this in. careful here.')
+  assert(on_gpu ~= nil, 'pass this in. careful here.')
+  local h,w = imgs:size(2), imgs:size(3)
+  local cnn_input_size = crop_size
+
+  if h > cnn_input_size or w > cnn_input_size then 
+    local xoff, yoff
+    if data_augment then
+      xoff, yoff = torch.random(w-cnn_input_size), torch.random(h-cnn_input_size)
+    else
+      -- sample the center
+      xoff, yoff = math.ceil((w-cnn_input_size)/2), math.ceil((h-cnn_input_size)/2)
+    end
+    -- crop.
+    imgs = imgs[{ {}, {yoff,yoff+cnn_input_size-1}, {xoff,xoff+cnn_input_size-1} }]
+  end
+  if not net_utils.inception7_mean_std then
+    net_utils.inception7_mean = 
+      torch.FloatTensor{0.48429165393391, 0.45580376382619, 0.40397758524087}
+    net_utils.inception7_std = 
+      torch.FloatTensor{0.22523080791307, 0.22056471186989, 0.22048053881112}
+  end
+  for c=1,3 do
+    imgs[{{c},{},{}}]:add(-net_utils.inception7_mean[c])
+    imgs[{{c},{},{}}]:div(net_utils.inception7_std[c])
+  end
+  if on_gpu then imgs = imgs:cuda() else imgs = imgs:float() end
+  return imgs
+end
+
+
 function net_utils.preprocess_inception7(imgs, crop_size, data_augment, on_gpu)
   assert(data_augment ~= nil, 'pass this in. careful here.')
   assert(on_gpu ~= nil, 'pass this in. careful here.')
