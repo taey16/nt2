@@ -14,12 +14,21 @@ local cjson = require 'cjson'
 torch.setdefaulttensortype('torch.FloatTensor') -- for CPU
 
 local model_filename = 
-  '/storage/coco/checkpoints/_inception7_bs16_encodeopt.crop_size_layer2/model_id_inception7_bs16_encodeopt.crop_size_layer2.t7'
+  '/storage/coco/checkpoints/_inception7_bs16_encode256_layer2/model_id_inception7_bs16_encode256_layer2.t7'
   --'/storage/coco/checkpoints/_inception7_bs16_encode512/model_id_inception7_bs16_encode512.t7'
   --'/storage/coco/checkpoints/_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5/model_id_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5.t7'
 local checkpoint = torch.load(model_filename)
 local batch_size = checkpoint.opt.batch_size
-local opt = {'rnn_size', 'input_encoding_size', 'drop_prob_lm', 'cnn_proto', 'cnn_model', 'seq_per_img', 'image_size', 'crop_size'}
+local opt = {
+  'rnn_size', 
+  'input_encoding_size', 
+  'drop_prob_lm', 
+  'cnn_proto', 
+  'cnn_model', 
+  'seq_per_img', 
+  'image_size', 
+  'crop_size'
+}
 for k,v in pairs(opt) do 
   opt[v] = checkpoint.opt[v]
 end
@@ -41,9 +50,9 @@ file:close()
 local info = cjson.decode(text)
 
 local outfile = io.open(
-  "model_id_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5.t7.html", "w"
+  "model_id_inception7_bs16_encode256_layer2.t7.html", "w"
   --"model_id_inception7_bs16_encode512.t7.html", "w"
-  --"coco_val2014.html", "w"
+  --"model_id_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5.t7.html", "w"
 )
 io.output(outfile)
 io.write("<html>\n  <head>\n    <table>\n      <tr>\n")
@@ -68,13 +77,24 @@ for k, v in pairs(info['images']) do print(info['images'][k]) end
   width : 640
 }
 --]]
+
+function permute(tab, n, count)
+  n = n or #tab
+  for i = 1, count or n do
+    local j = math.random(i, n)
+    tab[i], tab[j] = tab[j], tab[i]
+  end
+  return tab
+end
+info = permute(info)
+
 local iter = 1
 for k, v in ipairs(info) do
   local fname = v['file_path'] 
   local captions = v['captions']
   print(fname)
   local url = string.gsub(fname, '/storage', 'http://10.202.35.109:2596/PBrain')
-  io.write(string.format("        <td><img src=\"%s\" height=\"opt.image_size\" width=\"opt.image_size\"></br>\n", url))
+  io.write(string.format("        <td><img src=\"%s\" height=\"292\" width=\"292\"></br>\n", url))
   for k,sent  in ipairs(captions) do
     io.write(string.format("          <font color=\"blue\">%s</font></br>\n", sent))
     print(sent)
@@ -82,12 +102,12 @@ for k, v in ipairs(info) do
 
   local img = image.load(fname)
   img = image.scale(img, opt.image_size, opt.image_size)
-  print(img:size())
+  --print(img:size())
   if img:size(1) == 1 then
     img = img:view(1,img:size(2), img:size(3)):repeatTensor(3,1,1)
   end
   img = net_utils.preprocess_inception7_predict(img, opt.crop_size, false, 1)
-  print(img:size())
+  --print(img:size())
   --print(img:type())
   local data = torch.CudaTensor(2, 3, opt.crop_size, opt.crop_size):fill(0)
   data[{{1},{},{},{}}] = img
