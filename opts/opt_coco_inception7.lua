@@ -4,13 +4,14 @@ local input_json = '/storage/coco/data_292.json'
 
 local use_vgg = false
 local torch_model= 
+  '/storage/ImageNet/ILSVRC2012/torch_cache/inception7_residual/gpu2_residual_feature_lr0.045_epoch19_Tue_Dec_29_15_06_01_2015/model_29.bn_removed.t7'
+  --'/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7'
   --'/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.t7'
-  '/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7'
 local image_size = 292
 local crop_size = 256
-local rnn_size = 384
-local num_rnn_layers = 2
-local input_encoding_size = 384
+local rnn_size = 512
+local num_rnn_layers = 1
+local input_encoding_size = 512
 local batch_size = 16
 
 local finetune_cnn_after = -1
@@ -22,7 +23,8 @@ local start_from =
   ''
   --'/storage/coco/checkpoints/_inception7_bs16_encode512/model_id_inception7_bs16_encode512.t7'
 local experiment_id = 
-  '_inception7_bs16_encode256_layer2'
+  '_ResCept_bs16_encode512_layer1'
+  --'_inception7_bs16_encode256_layer2'
   --'_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5'
 local gpuid = 0
 
@@ -115,8 +117,6 @@ cmd:option('-language_eval', 1,
   'Evaluate language as well (1 = yes, 0 = no)? BLEU/CIDEr/METEOR/ROUGE_L? requires coco-caption code from Github.')
 cmd:option('-losses_log_every', 25, 
   'How often do we snapshot losses (in loss_history), for inclusion in the progress dump? (0 = disable)')
-cmd:option('-test_initialization', test_initialization,
-  'testing initial model')
 
 -- misc
 cmd:option('-backend', 'cudnn', 'nn|cudnn')
