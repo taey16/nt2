@@ -11,5 +11,8 @@ We are waiting for the updated result(~0.9 CIDEr) from Karpathy. We look forward
 # Acknowledgements
 - Karpathy's great works [neuraltalk2](https://github.com/karpathy/neuraltalk2),[neuraltalk](https://github.com/karpathy/neuraltalk)
 
+# Misc.
+- our BN-inception7-Residual net: [inception7_residual.lua](https://github.com/taey16/image-encoder/blob/master/models/inception7_residual.lua), [inception_modules.lua](https://github.com/taey16/image-encoder/blob/master/models/inception_module.lua)
+
 We welcome to any questions, discussion, issues. 
 (taey1600@gmail.com)
