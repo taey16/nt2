@@ -81,6 +81,7 @@ for k, v in pairs(info['images']) do print(info['images'][k]) end
 }
 --]]
 
+torch.manualSeed(999)
 function permute(tab, n, count)
   n = n or #tab
   for i = 1, count or n do
@@ -96,7 +97,7 @@ for k, v in ipairs(info) do
   local fname = v['file_path'] 
   local captions = v['captions']
   print(fname)
-  local url = string.gsub(fname, '/storage', 'http://10.202.35.109:2596/PBrain')
+  local url = string.gsub(fname, '/storage', 'http://10.202.4.219:2596/PBrain')
   io.write(string.format("        <td><img src=\"%s\" height=\"292\" width=\"292\"></br>\n", url))
   for k,sent  in ipairs(captions) do
     io.write(string.format("          <font color=\"blue\">%s</font></br>\n", sent))
@@ -114,8 +115,7 @@ for k, v in ipairs(info) do
   local feats = protos.cnn:forward(data)
   local seq = protos.lm:sample(feats, sample_opts)
   local sents = net_utils.decode_sequence(vocab, seq)
-  output_dic['url'] = sents
-  json_obj = cjson.encode(output_dic)
+  output_dic[url] = sents
   print('\n')
   io.write(string.format("        <font color=\"green\">%s</font>", sents[1]))
   io.write("      </td>\n")
@@ -131,4 +131,6 @@ end
 
 io.write("    </table>\n  </head>\n</html>")
 io.close(outfile)
+
+json_obj = cjson.encode(output_dic)
 --]]

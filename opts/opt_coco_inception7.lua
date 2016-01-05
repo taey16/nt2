@@ -14,16 +14,17 @@ local num_rnn_layers = 1
 local input_encoding_size = 512
 local batch_size = 16
 
-local finetune_cnn_after = -1
-local learning_rate = 4e-4
-local cnn_learning_rate = 1e-5
+local finetune_cnn_after = 0
+local learning_rate = 4e-5
+local cnn_learning_rate = 1e-6
 local cnn_weight_decay = 0.0000001
 
 local start_from = 
-  ''
+  '/storage/coco/checkpoints/_inception7_bs16_encode256_layer2/model_id_inception7_bs16_encode256_layer2.t7'
   --'/storage/coco/checkpoints/_inception7_bs16_encode512/model_id_inception7_bs16_encode512.t7'
 local experiment_id = 
-  '_ResCept_bs16_encode512_layer1'
+  '_inception7_bs16_encode256_layer2_finetune_lr4e-5_clr1e-6_wc1e-7'
+  --'_ResCept_bs16_encode512_layer1'
   --'_inception7_bs16_encode256_layer2'
   --'_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5'
 local gpuid = 0
