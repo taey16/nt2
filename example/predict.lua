@@ -44,6 +44,10 @@ for k,v in pairs(protos) do v:cuda() end
 protos.cnn:evaluate()
 protos.lm:evaluate()
 
+local output_dic_filename = 
+  'COCO_sentense.txt'
+local outfile_dic = io.open(output_dic_filename, 'w')
+
 local json_filename = 
   '/storage/coco/coco_raw.json'
 local file = io.open(json_filename, 'r')
@@ -57,8 +61,7 @@ local outfile = io.open(
   --"model_id_inception7_bs16_encode512.t7.html", "w"
   --"model_id_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5.t7.html", "w"
 )
-io.output(outfile)
-io.write("<html>\n  <head>\n    <table>\n      <tr>\n")
+outfile:write("<html>\n  <head>\n    <table>\n      <tr>\n")
 
 --[[
 for k, v in pairs(info) do print(k) end
@@ -97,10 +100,13 @@ for k, v in ipairs(info) do
   local fname = v['file_path'] 
   local captions = v['captions']
   print(fname)
+  if fname == '/storage/coco/val2014/COCO_val2014_000000320612.jpg' then
+    fname = '/storage/coco/val2014/COCO_val2014_000000320612.png'
+  end
   local url = string.gsub(fname, '/storage', 'http://10.202.4.219:2596/PBrain')
-  io.write(string.format("        <td><img src=\"%s\" height=\"292\" width=\"292\"></br>\n", url))
+  outfile:write(string.format("        <td><img src=\"%s\" height=\"292\" width=\"292\"></br>\n", url))
   for k,sent  in ipairs(captions) do
-    io.write(string.format("          <font color=\"blue\">%s</font></br>\n", sent))
+    outfile:write(string.format("          <font color=\"blue\">%s</font></br>\n", sent))
     print(sent)
   end
 
@@ -115,12 +121,13 @@ for k, v in ipairs(info) do
   local feats = protos.cnn:forward(data)
   local seq = protos.lm:sample(feats, sample_opts)
   local sents = net_utils.decode_sequence(vocab, seq)
-  output_dic[url] = sents
+  output_dic[url] = sents[1]
+  outfile_dic:write(string.format('%s,%s\n', url, sents[1]))
   print('\n')
-  io.write(string.format("        <font color=\"green\">%s</font>", sents[1]))
-  io.write("      </td>\n")
+  outfile:write(string.format("        <font color=\"green\">%s</font>", sents[1]))
+  outfile:write("      </td>\n")
   if iter % 5 == 0 then
-    io.write("    </tr>\n<tr>\n")
+    outfile:write("    </tr>\n<tr>\n")
   end
   for k,_ in pairs(sents) do
     print(sents[k])
@@ -129,8 +136,10 @@ for k, v in ipairs(info) do
   iter = iter+1
 end
 
-io.write("    </table>\n  </head>\n</html>")
-io.close(outfile)
+outfile:write("    </table>\n  </head>\n</html>")
+outfile:close()
+outfile_dic:close()
 
 json_obj = cjson.encode(output_dic)
+print(json_obj)
 --]]
