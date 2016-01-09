@@ -60,6 +60,8 @@ function rmsprop(x, dx, lr, alpha, epsilon, state)
 end
 
 
+-- ADAM: A Method for Stochastic Optimization, ICLR, 2015
+-- ADAM i.e. ADAptive Moment estimate
 function adam(x, dx, lr, beta1, beta2, epsilon, state)
   local beta1 = beta1 or 0.9
   local beta2 = beta2 or 0.999
