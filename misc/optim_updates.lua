@@ -62,6 +62,13 @@ end
 
 -- ADAM: A Method for Stochastic Optimization, ICLR, 2015
 -- ADAM i.e. ADAptive Moment estimate
+-- Good default settings for the tested machine learning problems
+-- alpha: 0.001, beta_1: 0.9, beta_2: 0.999, epsilon: 10e-8 where
+-- \alpha: stepsize
+-- \beta_1, \beta_2 \in [0, 1): exponential decay rates for the moment estimates
+-- m: 1st moment vector
+-- v: 2nd moment vector 
+-- t: timestep(update step)
 function adam(x, dx, lr, beta1, beta2, epsilon, state)
   local beta1 = beta1 or 0.9
   local beta2 = beta2 or 0.999
@@ -79,8 +86,11 @@ function adam(x, dx, lr, beta1, beta2, epsilon, state)
   end
 
   -- Decay the first and second moment running average coefficient
+  -- update biased first moment estimate
   state.m:mul(beta1):add(1-beta1, dx)
+  -- update biased second raw moment estimate
   state.v:mul(beta2):addcmul(1-beta2, dx, dx)
+  -- compute denominator for final update
   state.tmp:copy(state.v):sqrt():add(epsilon)
 
   state.t = state.t + 1
@@ -88,7 +98,7 @@ function adam(x, dx, lr, beta1, beta2, epsilon, state)
   local biasCorrection2 = 1 - beta2^state.t
   local stepSize = lr * math.sqrt(biasCorrection2)/biasCorrection1
   
-  -- perform update
+  -- perform final update
   x:addcdiv(-stepSize, state.m, state.tmp)
 end
 
