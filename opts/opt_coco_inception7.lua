@@ -4,26 +4,31 @@ local input_json = '/storage/coco/data_292.json'
 
 local use_vgg = false
 local torch_model= 
-  '/storage/ImageNet/ILSVRC2012/torch_cache/inception7_residual/gpu2_residual_feature_lr0.045_epoch19_Tue_Dec_29_15_06_01_2015/model_29.bn_removed.t7'
+  '/storage/ImageNet/ILSVRC2012/torch_cache/inception7_residual/gpu2_residual_feature_lr0.045_epoch19_Wed_Dec_30_20_40_18_2015/model_35.bn_removed.t7'
+  --'/storage/ImageNet/ILSVRC2012/torch_cache/inception7_residual/gpu2_residual_feature_lr0.045_epoch19_Tue_Dec_29_15_06_01_2015/model_29.bn_removed.t7'
   --'/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.bn_removed.t7'
   --'/storage/ImageNet/ILSVRC2012/torch_cache/inception7/digits_gpu_2_lr0.045SatDec514:08:122015/model_40.t7'
 local image_size = 292
 local crop_size = 256
-local rnn_size = 512
-local num_rnn_layers = 1
-local input_encoding_size = 512
+local rnn_size = 384
+local num_rnn_layers = 2
+local input_encoding_size = 2048
 local batch_size = 16
 
-local finetune_cnn_after = 0
-local learning_rate = 4e-5
-local cnn_learning_rate = 1e-6
+local finetune_cnn_after = -1
+local learning_rate = 4e-4
+local cnn_learning_rate = 1e-5
 local cnn_weight_decay = 0.0000001
 
 local start_from = 
-  '/storage/coco/checkpoints/_inception7_bs16_encode256_layer2/model_id_inception7_bs16_encode256_layer2.t7'
+  ''
+  --'/storage/coco/checkpoints/_inception7_bs16_encode256_layer2/model_id_inception7_bs16_encode256_layer2.t7'
   --'/storage/coco/checkpoints/_inception7_bs16_encode512/model_id_inception7_bs16_encode512.t7'
 local experiment_id = 
-  '_inception7_bs16_encode256_layer2_finetune_lr4e-5_clr1e-6_wc1e-7'
+  '_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4'
+  --'_ReCept_bn_removed_epoch35_bs16_encode384_layer2_lr4e-5'
+  --'_ReCept_bn_removed_epoch35_bs16_encode384_layer1_lr4e-5'
+  --'_inception7_bs16_encode256_layer2_finetune_lr4e-5_clr1e-6_wc1e-7'
   --'_ResCept_bs16_encode512_layer1'
   --'_inception7_bs16_encode256_layer2'
   --'_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5'
