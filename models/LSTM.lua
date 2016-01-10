@@ -25,24 +25,26 @@ function LSTM.lstm(input_size, output_size, rnn_size, n, dropout)
       input_size_L = input_size
     else 
       x = outputs[(L-1)*2] 
-      if dropout > 0 then x = nn.Dropout(dropout)(x):annotate{name='drop_' .. L} end -- apply dropout, if any
+      if dropout > 0 then 
+        x = nn.Dropout(dropout)(x):annotate{name='drop_' .. L} 
+      end -- apply dropout, if any
       input_size_L = rnn_size
     end
     -- evaluate the input sums at once for efficiency
-    local i2h = nn.Linear(input_size_L, 4 * rnn_size)(x):annotate{name='i2h_'..L}
-    local h2h = nn.Linear(rnn_size, 4 * rnn_size)(prev_h):annotate{name='h2h_'..L}
+    local i2h = nn.Linear(input_size_L,4 * rnn_size)(x):annotate{name='i2h_'..L}
+    local h2h = nn.Linear(rnn_size,    4 * rnn_size)(prev_h):annotate{name='h2h_'..L}
     local all_input_sums = nn.CAddTable()({i2h, h2h})
 
     local reshaped = nn.Reshape(4, rnn_size)(all_input_sums)
     local n1, n2, n3, n4 = nn.SplitTable(2)(reshaped):split(4)
     -- decode the gates
-    local in_gate = nn.Sigmoid()(n1)
-    local forget_gate = nn.Sigmoid()(n2)
-    local out_gate = nn.Sigmoid()(n3)
+    local in_gate    = nn.Sigmoid()(n1)
+    local forget_gate= nn.Sigmoid()(n2)
+    local out_gate   = nn.Sigmoid()(n3)
     -- decode the write inputs
     local in_transform = nn.Tanh()(n4)
     -- perform the LSTM update
-    local next_c           = nn.CAddTable()({
+    local next_c = nn.CAddTable()({
         nn.CMulTable()({forget_gate, prev_c}),
         nn.CMulTable()({in_gate,     in_transform})
       })
@@ -55,7 +57,9 @@ function LSTM.lstm(input_size, output_size, rnn_size, n, dropout)
 
   -- set up the decoder
   local top_h = outputs[#outputs]
-  if dropout > 0 then top_h = nn.Dropout(dropout)(top_h):annotate{name='drop_final'} end
+  if dropout > 0 then 
+    top_h = nn.Dropout(dropout)(top_h):annotate{name='drop_final'} 
+  end
   local proj = nn.Linear(rnn_size, output_size)(top_h):annotate{name='decoder'}
   local logsoft = nn.LogSoftMax()(proj)
   table.insert(outputs, logsoft)
