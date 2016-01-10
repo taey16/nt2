@@ -15,8 +15,8 @@ require 'optim'
 require 'cephes' -- for cephes.log2
 
 
-local opt = paths.dofile('opts/opt_coco_inception7.lua')
---local opt = paths.dofile('opts/opt_coco_vgg.lua')
+--local opt = paths.dofile('opts/opt_coco_inception7.lua')
+local opt = paths.dofile('opts/opt_coco_vgg.lua')
 torch.manualSeed(opt.seed)
 torch.setdefaulttensortype('torch.FloatTensor')
 cutorch.manualSeed(opt.seed)
@@ -53,10 +53,10 @@ else
   lmOpt.batch_size = opt.batch_size * opt.seq_per_img
   protos.lm = nn.LanguageModel(lmOpt)
   -- initialize the ConvNet
-  local cnn_backend = opt.backend
+  local cnn_backend = 'cudnn'
   if opt.use_vgg then
     require 'loadcaffe'
-    local cnn_backend = opt.backend
+    local cnn_backend = 'cudnn'
     local cnn_raw = 
       loadcaffe.load(opt.cnn_proto, opt.cnn_model, cnn_backend)
     protos.cnn = 

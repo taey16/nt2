@@ -44,7 +44,6 @@ function net_utils.build_cnn(cnn, opt)
   local cnn_part = nn.Sequential()
   for i = 1, layer_num do
     local layer = cnn:get(i)
-
     if i == 1 then
       -- convert kernels in first conv layer into RGB format instead of BGR,
       -- which is the order in which it was trained in Caffe
@@ -54,12 +53,11 @@ function net_utils.build_cnn(cnn, opt)
       layer.weight[{ {}, 1, {}, {} }]:copy(w[{ {}, 3, {}, {} }])
       layer.weight[{ {}, 3, {}, {} }]:copy(w[{ {}, 1, {}, {} }])
     end
-
     cnn_part:add(layer)
   end
-
-  cnn_part:add(nn.Linear(4096,encoding_size))
-  cnn_part:add(backend.ReLU(true))
+  cnn_part:add(nn.View(4096))
+  --cnn_part:add(nn.Linear(4096,encoding_size))
+  --cnn_part:add(backend.ReLU(true))
   return cnn_part
 end
 
