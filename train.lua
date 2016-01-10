@@ -12,6 +12,7 @@ require 'misc.DataLoader'
 require 'misc.optim_updates'
 require 'models.LanguageModel'
 require 'optim'
+require 'cephes' -- for cephes.log2
 
 
 local opt = paths.dofile('opts/opt_coco_inception7.lua')
@@ -116,6 +117,7 @@ local function eval_split(split, evalopt)
   loader:resetIterator(split) -- rewind iteator back to first datapoint in the split
   local n = 0
   local loss_sum = 0
+  local perplexity = 0
   local loss_evals = 0
   local predictions = {}
   local vocab = loader:getVocab()
@@ -125,9 +127,9 @@ local function eval_split(split, evalopt)
     local data = loader:getBatch{batch_size = opt.batch_size, image_size = opt.image_size, split = split, seq_per_img = opt.seq_per_img}
     if opt.use_vgg then
       data.images = 
-        -- preprocess in place, and don't augment
         net_utils.prepro(data.images, opt.crop_size, false, opt.gpuid >= 0)
     else
+      -- preprocess in place, and don't augment
       data.images = 
         net_utils.preprocess_inception7(data.images, opt.crop_size, false, opt.gpuid >= 0)
     end
@@ -140,6 +142,7 @@ local function eval_split(split, evalopt)
     local loss = protos.crit:forward(logprobs, data.labels)
     loss_sum = loss_sum + loss
     loss_evals = loss_evals + 1
+    perplexity = -cephes.log2(loss)
 
     -- forward the model to also get generated samples for each image
     local seq = protos.lm:sample(feats)
@@ -164,12 +167,14 @@ local function eval_split(split, evalopt)
     if n >= val_images_use then break end -- we've used enough images
   end
 
+  perplexity = cephes.pow(2.0, perplexity / opt.seq_per_img / loss_evals)
+
   local lang_stats
   if opt.language_eval == 1 then
     lang_stats = net_utils.language_eval(predictions, opt.id)
   end
 
-  return loss_sum/loss_evals, predictions, lang_stats
+  return loss_sum/loss_evals, predictions, lang_stats, perplexity
 end
 
 -------------------------------------------------------------------------------
@@ -193,11 +198,10 @@ local function lossFun(finetune_cnn)
     split = 'train', 
     seq_per_img = opt.seq_per_img}
   if opt.use_vgg then
-    -- preproces in-place, data augment
     data.images = 
       net_utils.prepro(data.images, opt.crop_size, true, opt.gpuid >= 0)
   else
-    -- preproces in-place, data augment
+    -- preproces in-place, data augment in training
     data.images = 
       net_utils.preprocess_inception7(data.images, opt.crop_size, true, opt.gpuid >= 0)
   end
@@ -212,6 +216,8 @@ local function lossFun(finetune_cnn)
   local logprobs = protos.lm:forward{expanded_feats, data.labels}
   -- forward the language model criterion
   local loss = protos.crit:forward(logprobs, data.labels)
+  -- compute perplexity
+  local perplexity = cephes.pow(2.0, -cephes.log2(loss) / opt.seq_per_img / opt.batch_size)
   
   -----------------------------------------------------------------------------
   -- Backward pass
@@ -239,7 +245,7 @@ local function lossFun(finetune_cnn)
   -----------------------------------------------------------------------------
 
   -- and lets get out!
-  local losses = { total_loss = loss }
+  local losses = { total_loss = loss, total_perplexity = perplexity }
   return losses
 end
 
@@ -319,9 +325,9 @@ while true do
   local epoch = iter * 1.0 / number_of_batches
   if iter % opt.display == 0 then
     io.flush(print(string.format(
-      '%d/%d: %.2f, trn loss: %f, lr: %.8f, cnn_lr: %.8f, finetune: %s, optim: %s, %.3f', 
+      '%d/%d: %.2f, trn loss: %f, pplx: %f, lr: %.8f, cnn_lr: %.8f, finetune: %s, optim: %s, %.3f', 
       iter, number_of_batches, epoch,
-      losses.total_loss, 
+      losses.total_loss, losses.total_perplexity,
       learning_rate, cnn_learning_rate, 
       tostring(finetune_cnn), opt.optim, elapsed_trn
     )))
@@ -338,11 +344,10 @@ while true do
 
     local start_tst = tm:time().real
     -- evaluate the validation performance
-    local val_loss, val_predictions, lang_stats = eval_split('val', 
-      {val_images_use = opt.val_images_use}
-    )
+    local val_loss, val_predictions, lang_stats, perplexity = 
+      eval_split('val', {val_images_use = opt.val_images_use})
     local elapsed_tst = tm:time().real
-    print('validation loss: ', val_loss)
+    print(string.format('validation loss: %f, perplexity: %f', val_loss, perplexity))
     --print(lang_stats)
     val_loss_history[iter] = val_loss
     if lang_stats then
