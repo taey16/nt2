@@ -13,7 +13,9 @@ local coco_utils = paths.dofile('../misc/coco_utils.lua')
 
 
 local model_filename = 
-  '/storage/coco/checkpoints/_inception7_bs16_encode256_layer2/model_id_inception7_bs16_encode256_layer2.t7'
+  '/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4.t7'
+  --'/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode256_layer2_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode256_layer2_lr4e-4.t7'
+  --'/storage/coco/checkpoints/_inception7_bs16_encode256_layer2/model_id_inception7_bs16_encode256_layer2.t7'
   --'/storage/coco/checkpoints/_inception7_bs16_encode512/model_id_inception7_bs16_encode512.t7'
   --'/storage/coco/checkpoints/_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5/model_id_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5.t7'
 local checkpoint = torch.load(model_filename)
@@ -46,7 +48,7 @@ protos.cnn:evaluate()
 protos.lm:evaluate()
 
 local output_dic_filename = 
-  'COCO_test_sentense.txt'
+  'COCO_test_sentences.txt'
 local outfile_dic = io.open(output_dic_filename, 'w')
 
 torch.manualSeed(999)
@@ -74,3 +76,4 @@ for k, v in pairs(info) do
   iter = iter+1
 end
 
+outfile_dic:close()

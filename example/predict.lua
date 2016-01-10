@@ -12,7 +12,9 @@ local net_utils = require 'misc.net_utils'
 
 
 local model_filename = 
-  '/storage/coco/checkpoints/_inception7_bs16_encode256_layer2/model_id_inception7_bs16_encode256_layer2.t7'
+  '/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4.t7'
+  --'/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode256_layer2_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode256_layer2_lr4e-4.t7'
+  --'/storage/coco/checkpoints/_inception7_bs16_encode256_layer2/model_id_inception7_bs16_encode256_layer2.t7'
   --'/storage/coco/checkpoints/_inception7_bs16_encode512/model_id_inception7_bs16_encode512.t7'
   --'/storage/coco/checkpoints/_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5/model_id_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5.t7'
 local checkpoint = torch.load(model_filename)
@@ -45,7 +47,7 @@ protos.cnn:evaluate()
 protos.lm:evaluate()
 
 local output_dic_filename = 
-  'COCO_sentense.txt'
+  'COCO_trainval_sentences.txt'
 local outfile_dic = io.open(output_dic_filename, 'w')
 
 local json_filename = 
@@ -57,7 +59,9 @@ local info = cjson.decode(text)
 
 local output_dic = {}
 local outfile = io.open(
-  "model_id_inception7_bs16_encode256_layer2.t7.html", "w"
+  "model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4.t7.html", "w"
+  --"model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode256_layer2_lr4e-4.t7.html", "w"
+  --"model_id_inception7_bs16_encode256_layer2.t7.html", "w"
   --"model_id_inception7_bs16_encode512.t7.html", "w"
   --"model_id_inception7_bs16_encode512_finetune_lr4e-6_clr1e-7_wc2e-5.t7.html", "w"
 )
@@ -140,6 +144,3 @@ outfile:write("    </table>\n  </head>\n</html>")
 outfile:close()
 outfile_dic:close()
 
-json_obj = cjson.encode(output_dic)
-print(json_obj)
---]]
