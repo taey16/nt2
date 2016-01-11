@@ -171,7 +171,8 @@ function layer:sample_beam(imgs, opt)
   local batch_size, feat_dim = imgs:size(1), imgs:size(2)
   local function compare(a,b) return a.p > b.p end -- used downstream
 
-  assert(beam_size <= self.vocab_size+1, 'lets assume this for now, otherwise this corner case causes a few headaches down the road. can be dealt with in future if needed')
+  assert(beam_size <= self.vocab_size+1, 
+    'lets assume this for now, otherwise this corner case causes a few headaches down the road. can be dealt with in future if needed')
 
   local seq = torch.LongTensor(self.seq_length, batch_size):zero()
   local seqLogprobs = torch.FloatTensor(self.seq_length, batch_size)
@@ -292,11 +293,13 @@ next token at every iteration of the LSTM (+2 because +1 for first dummy
 img forward, and another +1 because of START/END tokens shift)
 --]]
 function layer:updateOutput(input)
+  -- vision input
   local imgs = input[1]
+  -- language input
   local seq = input[2]
+  assert(seq:size(1) == self.seq_length)
   if self.clones == nil then self:createClones() end -- lazily create clones on first forward pass
 
-  assert(seq:size(1) == self.seq_length)
   local batch_size = seq:size(2)
   self.output:resize(self.seq_length+2, batch_size, self.vocab_size+1)
   

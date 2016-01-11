@@ -1,7 +1,10 @@
 
+require 'torch'
+
 local coco_utils = {}
 
-function coco_utils.permute(tab, n, count)
+function coco_utils.permute(tab, n, count, manualSeed)
+  torch.manualSeed(manualSeed)
   n = n or #tab
   for i = 1, count or n do
     local j = math.random(i, n)
