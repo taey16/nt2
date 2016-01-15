@@ -1,6 +1,6 @@
 
-local input_h5 = '/storage/coco/data_292.h5'
-local input_json = '/storage/coco/data_292.json'
+local input_h5 = '/data2/coco/data_292.h5'
+local input_json = '/data2/coco/data_292.json'
 
 local use_vgg = false
 local torch_model= 
@@ -11,7 +11,7 @@ local torch_model=
 local image_size = 292
 local crop_size = 256
 local rnn_size = 384
-local num_rnn_layers = 2
+local num_rnn_layers = 3
 local input_encoding_size = 2048
 local batch_size = 16
 
@@ -25,7 +25,7 @@ local start_from =
   --'/storage/coco/checkpoints/_inception7_bs16_encode256_layer2/model_id_inception7_bs16_encode256_layer2.t7'
   --'/storage/coco/checkpoints/_inception7_bs16_encode512/model_id_inception7_bs16_encode512.t7'
 local experiment_id = 
-  '_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4'
+  '_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer3_lr4e-4'
   --'_ReCept_bn_removed_epoch35_bs16_encode384_layer2_lr4e-5'
   --'_ReCept_bn_removed_epoch35_bs16_encode384_layer1_lr4e-5'
   --'_inception7_bs16_encode256_layer2_finetune_lr4e-5_clr1e-6_wc1e-7'
