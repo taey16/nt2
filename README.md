@@ -6,7 +6,9 @@
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_vgg_inception_loss.png)
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_vgg_inception_CIDEr.png)
 We trained LSTM at first, and then finetuned CNN as well(we got about 0.02 points improvement but missing above curve). 
-We are waiting for the updated result(~0.9 CIDEr) from Karpathy. We look forward to some notable explanation that how to got reached at that result.
+- Our best model reached at ~0.9 CIDEr
+![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_ResCeption_embedding2048_lstm3_loss.png)
+![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_ResCeption_embedding2048_lstm3_CIDEr.png)
 
 # Acknowledgements
 - Karpathy's great works [neuraltalk2](https://github.com/karpathy/neuraltalk2),[neuraltalk](https://github.com/karpathy/neuraltalk)

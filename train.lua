@@ -15,8 +15,8 @@ require 'optim'
 require 'cephes' -- for cephes.log2
 
 
---local opt = paths.dofile('opts/opt_coco_inception7.lua')
-local opt = paths.dofile('opts/opt_coco_vgg.lua')
+local opt = paths.dofile('opts/opt_coco_inception7.lua')
+--local opt = paths.dofile('opts/opt_coco_vgg.lua')
 torch.manualSeed(opt.seed)
 torch.setdefaulttensortype('torch.FloatTensor')
 cutorch.manualSeed(opt.seed)
