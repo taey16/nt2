@@ -10,7 +10,9 @@ We trained LSTM at first, and then finetuned CNN as well(we got about 0.02 point
 
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_ResCeption_embedding2048_lstm3_loss.png)
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_ResCeption_embedding2048_lstm3_CIDEr.png)
-We first used inception, residual style networks not vgg. We removed random embedding(projection)
+
+1. We first used inception, residual style networks not vgg. 
+2. We removed random embedding(projection)
 ```Shell
 -- net_utils.build_inception_cnn(opt) in misc/net_utils.lua
 local cnn_part = nn.Sequential()
@@ -23,7 +25,7 @@ print(cnn_part)
 print('===> Loading pre-trained inception7 model complete')
 return cnn_part 
 ```
-We used 3 layered deep LSTM
+3. We used 3 layered deep LSTM
 
 # Acknowledgements
 - Karpathy's great works [neuraltalk2](https://github.com/karpathy/neuraltalk2),[neuraltalk](https://github.com/karpathy/neuraltalk)
