@@ -7,7 +7,6 @@
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_vgg_inception_CIDEr.png)
 We trained LSTM at first, and then finetuned CNN as well(we got about 0.02 points improvement but missing above curve). 
 - Our best model reached at ~0.9 CIDEr
-
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_ResCeption_embedding2048_lstm3_loss.png)
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_ResCeption_embedding2048_lstm3_CIDEr.png)
 
