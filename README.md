@@ -7,8 +7,23 @@
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_vgg_inception_CIDEr.png)
 We trained LSTM at first, and then finetuned CNN as well(we got about 0.02 points improvement but missing above curve). 
 - Our best model reached at ~0.9 CIDEr
+
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_ResCeption_embedding2048_lstm3_loss.png)
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_ResCeption_embedding2048_lstm3_CIDEr.png)
+We first used inception, residual style networks not vgg. We removed random embedding(projection)
+```Shell
+-- net_utils.build_inception_cnn(opt) in misc/net_utils.lua
+local cnn_part = nn.Sequential()
+cnn_part:add(vision_encoder)
+cnn_part:add(nn.View(2048))
+-- remove random embedding(projection)
+--cnn_part:add(nn.Linear(2048,encoding_size))
+--cnn_part:add(cudnn.ReLU(true))
+print(cnn_part)
+print('===> Loading pre-trained inception7 model complete')
+return cnn_part 
+```
+We used 3 layered deep LSTM
 
 # Acknowledgements
 - Karpathy's great works [neuraltalk2](https://github.com/karpathy/neuraltalk2),[neuraltalk](https://github.com/karpathy/neuraltalk)
