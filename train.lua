@@ -15,7 +15,8 @@ require 'optim'
 require 'cephes' -- for cephes.log2
 
 
-local opt = paths.dofile('opts/opt_coco_inception7.lua')
+local opt = paths.dofile('opts/opt_coco_inception-v3.lua')
+--local opt = paths.dofile('opts/opt_coco_inception7.lua')
 --local opt = paths.dofile('opts/opt_coco_vgg.lua')
 torch.manualSeed(opt.seed)
 torch.setdefaulttensortype('torch.FloatTensor')
@@ -217,7 +218,7 @@ local function lossFun(finetune_cnn)
   -- forward the language model criterion
   local loss = protos.crit:forward(logprobs, data.labels)
   -- compute perplexity
-  local perplexity = cephes.pow(2.0, -cephes.log2(loss) / opt.seq_per_img / opt.batch_size)
+  local perplexity = cephes.pow(2.0, -cephes.log2(loss) / opt.batch_size)
   
   -----------------------------------------------------------------------------
   -- Backward pass
