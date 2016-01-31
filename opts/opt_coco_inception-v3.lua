@@ -1,10 +1,10 @@
 
-local input_h5 = '/data2/coco/data_342.h5'
-local input_json = '/data2/coco/data_342.json'
+local input_h5 = '/storage/coco/data_342.h5'
+local input_json = '/storage/coco/data_342.json'
 
 local use_vgg = false
 local torch_model= 
-  '/data2/ImageNet/ILSVRC2012/torch_cache/inception-v3-2015-12-05/digits_gpu2_inception-v3-2015-12-05_Wed_Jan_27_22_47_34_2016/model_10.bn_removed.t7'
+  '/storage/ImageNet/ILSVRC2012/torch_cache/inception-v3-2015-12-05/digits_gpu2_inception-v3-2015-12-05_Wed_Jan_27_22_47_34_2016/model_10.bn_removed.t7'
 local image_size = 342
 local crop_size = 299
 local rnn_size = 384
@@ -104,7 +104,7 @@ cmd:option('-train_samples', 123287 - 3200,
   '# of samples in training set')
 cmd:option('-val_images_use', 3200, 
   'how many images to use when periodically evaluating the validation loss? (-1 = all)')
-cmd:option('-save_checkpoint_every', math.floor(7505/4.0), 
+cmd:option('-save_checkpoint_every', math.floor(7504/4.0), 
   'how often to save a model checkpoint?')
 cmd:option('-checkpoint_path', '/storage/coco/checkpoints', 
   'folder to save checkpoints into (empty = this folder)')
