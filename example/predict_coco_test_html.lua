@@ -12,7 +12,8 @@ local coco_utils = paths.dofile('../misc/coco_utils.lua')
 
 
 local model_filename = 
-  '/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer3_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer3_lr4e-4.t7'
+  '/storage/coco/checkpoints/_inception-v3-2015-12-05_bn_removed_epoch10_bs16_embedding2048_encode384_layer3_lr4e-4/model_id_inception-v3-2015-12-05_bn_removed_epoch10_bs16_embedding2048_encode384_layer3_lr4e-4.t7'
+  --'/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer3_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer3_lr4e-4.t7'
   --'/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4.t7'
   --'/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode256_layer2_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode256_layer2_lr4e-4.t7'
   --'/storage/coco/checkpoints/_inception7_bs16_encode256_layer2/model_id_inception7_bs16_encode256_layer2.t7'
@@ -56,18 +57,19 @@ local fp_html = io.open(output_html_filename, 'w')
 fp_html:write("<html>\n  <head>\n    <table>\n      <tr>\n")
 
 local manualSeed = 123
-filename_list, url_list, list_table = coco_utils.get_test('/data2/coco/test2015.txt')
+filename_list, url_list, list_table = coco_utils.get_test('/storage/coco/test2015.txt')
 info = coco_utils.permute(list_table, nil, nil, manualSeed)
 
 local iter = 1
 for k, url in pairs(info) do
-  local fname = string.format('%s/%s', '/data2/coco/test2015', k)
+  local fname = string.format('%s/%s', '/storage/coco/test2015', k)
   io.flush(print(iter .. ' ' .. fname))
   local img = image.load(fname)
   img = image.scale(img, opt.image_size, opt.image_size)
   if img:size(1) == 1 then
     img = img:view(1,img:size(2), img:size(3)):repeatTensor(3,1,1)
   end
+  print(img:size())
   img = net_utils.preprocess_inception7_predict(img, opt.crop_size, false, 1)
   local data = torch.CudaTensor(2, 3, opt.crop_size, opt.crop_size):fill(0)
   data[{{1},{},{},{}}] = img
@@ -91,3 +93,4 @@ end
 
 outfile_dic:close()
 fp_html:close()
+

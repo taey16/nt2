@@ -20,7 +20,7 @@ local cnn_weight_decay = 0.0000001
 local start_from = 
   ''
 local experiment_id = 
-  '_inception-v3-2015-12-05_bn_removed_epoch10_bs16_embedding2048_encode384_layer3_lr4e-4'
+  '_inception-v3-2015-12-05_bn_removed_epoch10_mean_std_modified_bs16_embedding2048_encode384_layer3_lr4e-4'
 local gpuid = 0
 
 cmd = torch.CmdLine()

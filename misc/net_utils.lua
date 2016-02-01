@@ -84,12 +84,12 @@ function net_utils.preprocess_inception7_predict(imgs, crop_size, data_augment, 
       -- for inception7~ResCeption
       --torch.FloatTensor{0.48429165393391, 0.45580376382619, 0.40397758524087}
       -- for inception-v3-2015-12-05
-      torch.FloatTensor(0.4853717905167, 0.45622173301884, 0.4061366788954)
+      torch.FloatTensor{0.4853717905167, 0.45622173301884, 0.4061366788954}
     net_utils.inception7_std = 
       -- for inception7~ResCeption
       --torch.FloatTensor{0.22523080791307, 0.22056471186989, 0.22048053881112}
       -- for inception-v3-2015-12-05
-      torch.FloatTensor(0.22682182875849, 0.22206057852892, 0.22145828935297)
+      torch.FloatTensor{0.22682182875849, 0.22206057852892, 0.22145828935297}
   end
   for c=1,3 do
     imgs[{{c},{},{}}]:add(-net_utils.inception7_mean[c])
@@ -119,9 +119,15 @@ function net_utils.preprocess_inception7(imgs, crop_size, data_augment, on_gpu)
   end
   if not net_utils.inception7_mean_std then
     net_utils.inception7_mean = 
-      torch.FloatTensor{0.48429165393391, 0.45580376382619, 0.40397758524087}
+      -- for inception7~ResCeption
+      --torch.FloatTensor{0.48429165393391, 0.45580376382619, 0.40397758524087}
+      -- for inception-v3-2015-12-05
+      torch.FloatTensor{0.4853717905167, 0.45622173301884, 0.4061366788954}
     net_utils.inception7_std = 
-      torch.FloatTensor{0.22523080791307, 0.22056471186989, 0.22048053881112}
+      -- for inception7~ResCeption
+      --torch.FloatTensor{0.22523080791307, 0.22056471186989, 0.22048053881112}
+      -- for inception-v3-2015-12-05
+      torch.FloatTensor{0.22682182875849, 0.22206057852892, 0.22145828935297}
   end
   imgs = torch.div(imgs:float(), 255.0)
   for c=1,3 do
