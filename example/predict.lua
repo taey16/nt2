@@ -12,7 +12,8 @@ local net_utils = require 'misc.net_utils'
 
 
 local model_filename = 
-  '/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4.t7'
+  '/storage/coco/checkpoints/_inception-v3-2015-12-05_bn_removed_epoch10_mean_std_modified_bs16_embedding2048_encode384_layer3_lr4e-4/model_id_inception-v3-2015-12-05_bn_removed_epoch10_mean_std_modified_bs16_embedding2048_encode384_layer3_lr4e-4.t7'
+  --'/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4.t7'
   --'/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode256_layer2_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode256_layer2_lr4e-4.t7'
   --'/storage/coco/checkpoints/_inception7_bs16_encode256_layer2/model_id_inception7_bs16_encode256_layer2.t7'
   --'/storage/coco/checkpoints/_inception7_bs16_encode512/model_id_inception7_bs16_encode512.t7'
@@ -46,8 +47,10 @@ for k,v in pairs(protos) do v:cuda() end
 protos.cnn:evaluate()
 protos.lm:evaluate()
 
+local model_filename_only = string.split(model_filename, '/')
+model_filename_only = model_filename_only[#model_filename_only]
 local output_dic_filename = 
-  'COCO_trainval_sentences.txt'
+  string.format('COCO_trainval_sentences.%s.txt', model_filename_only)
 local outfile_dic = io.open(output_dic_filename, 'w')
 
 local json_filename = 
@@ -59,7 +62,8 @@ local info = cjson.decode(text)
 
 local output_dic = {}
 local outfile = io.open(
-  "model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4.t7.html", "w"
+  string.format('%s.html', output_dic_filename), "w"
+  --"model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4.t7.html", "w"
   --"model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode256_layer2_lr4e-4.t7.html", "w"
   --"model_id_inception7_bs16_encode256_layer2.t7.html", "w"
   --"model_id_inception7_bs16_encode512.t7.html", "w"

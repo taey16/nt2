@@ -12,7 +12,8 @@ local coco_utils = paths.dofile('../misc/coco_utils.lua')
 
 
 local model_filename = 
-  '/storage/coco/checkpoints/_inception-v3-2015-12-05_bn_removed_epoch10_bs16_embedding2048_encode384_layer3_lr4e-4/model_id_inception-v3-2015-12-05_bn_removed_epoch10_bs16_embedding2048_encode384_layer3_lr4e-4.t7'
+  '/storage/coco/checkpoints/_inception-v3-2015-12-05_bn_removed_epoch10_mean_std_modified_bs16_embedding2048_encode384_layer3_lr4e-4/model_id_inception-v3-2015-12-05_bn_removed_epoch10_mean_std_modified_bs16_embedding2048_encode384_layer3_lr4e-4.t7'
+  --'/storage/coco/checkpoints/_inception-v3-2015-12-05_bn_removed_epoch10_bs16_embedding2048_encode384_layer3_lr4e-4/model_id_inception-v3-2015-12-05_bn_removed_epoch10_bs16_embedding2048_encode384_layer3_lr4e-4.t7'
   --'/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer3_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer3_lr4e-4.t7'
   --'/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode384_layer2_lr4e-4.t7'
   --'/storage/coco/checkpoints/_ReCept_bn_removed_epoch35_bs16_embedding2048_encode256_layer2_lr4e-4/model_id_ReCept_bn_removed_epoch35_bs16_embedding2048_encode256_layer2_lr4e-4.t7'
@@ -48,11 +49,13 @@ for k,v in pairs(protos) do v:cuda() end
 protos.cnn:evaluate()
 protos.lm:evaluate()
 
+local model_filename_only = string.split(model_filename, '/')
+model_filename_only = model_filename_only[#model_filename_only]
 local output_dic_filename = 
-  'COCO_test_sentences.txt'
+  string.format('COCO_test_sentences.%s.txt', model_filename_only)
 local outfile_dic = io.open(output_dic_filename, 'w')
 local output_html_filename = 
-  'COCO_test_sentences.txt.html'
+  string.format('%s.html', output_dic_filename)
 local fp_html = io.open(output_html_filename, 'w')
 fp_html:write("<html>\n  <head>\n    <table>\n      <tr>\n")
 
@@ -69,7 +72,6 @@ for k, url in pairs(info) do
   if img:size(1) == 1 then
     img = img:view(1,img:size(2), img:size(3)):repeatTensor(3,1,1)
   end
-  print(img:size())
   img = net_utils.preprocess_inception7_predict(img, opt.crop_size, false, 1)
   local data = torch.CudaTensor(2, 3, opt.crop_size, opt.crop_size):fill(0)
   data[{{1},{},{},{}}] = img
