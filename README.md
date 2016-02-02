@@ -9,7 +9,7 @@ We trained LSTM at first, and then finetuned CNN as well(we got about 0.02 point
 - Our best model reached at 0.923 CIDEr
 
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_loss_inception-v3_embedding2048_hidden384_layer3.png)
-![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_loss_inception-v3_embedding2048_hidden384_layer3.png)
+![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_CIDEr_inception-v3_embedding2048_hidden384_layer3.png)
 
 1. We first used inception-v3, residual style networks not vgg. 
 2. We removed random embedding(projection)
