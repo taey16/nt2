@@ -6,12 +6,12 @@
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_vgg_inception_loss.png)
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_vgg_inception_CIDEr.png)
 We trained LSTM at first, and then finetuned CNN as well(we got about 0.02 points improvement but missing above curve). 
-- Our best model reached at ~0.9 CIDEr
+- Our best model reached at 0.923 CIDEr
 
-![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_ResCeption_embedding2048_lstm3_loss.png)
-![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_ResCeption_embedding2048_lstm3_CIDEr.png)
+![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_loss_inception-v3_embedding2048_hidden384_layer3.png)
+![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_loss_inception-v3_embedding2048_hidden384_layer3.png)
 
-1. We first used inception, residual style networks not vgg. 
+1. We first used inception-v3, residual style networks not vgg. 
 2. We removed random embedding(projection)
 3. We used 3 layered deep LSTM
 ```Shell
