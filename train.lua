@@ -15,7 +15,8 @@ require 'optim'
 require 'cephes' -- for cephes.log2
 
 
-local opt = paths.dofile('opts/opt_coco_inception-v3.lua')
+local opt = paths.dofile('opts/opt_attribute_inception-v3.lua')
+--local opt = paths.dofile('opts/opt_coco_inception-v3.lua')
 --local opt = paths.dofile('opts/opt_coco_inception7.lua')
 --local opt = paths.dofile('opts/opt_coco_vgg.lua')
 torch.manualSeed(opt.seed)
@@ -149,10 +150,10 @@ local function eval_split(split, evalopt)
     local seq = protos.lm:sample(feats)
     local sents = net_utils.decode_sequence(vocab, seq)
     for k=1,#sents do
-      local entry = {image_id = data.infos[k].id, caption = sents[k]}
+      local entry = {image_id = data.infos[k].id, file_path = data.infos[k].file_path, caption = sents[k]}
       table.insert(predictions, entry)
       if verbose then
-        print(string.format('image %s: %s', entry.image_id, entry.caption))
+        print(string.format('image %s(%s): %s', entry.image_id, entry.file_path, entry.caption))
       end
     end
 
@@ -395,19 +396,28 @@ while true do
         print('wrote checkpoint to ' .. checkpoint_path .. '.t7')
       end
     end
-    logger_tst:add{
-      ['time'] = elapsed_tst,
-      ['iter'] = iter,
-      ['epoch']= epoch,
-      ['loss'] = val_loss,
-      ['CIDEr']  = lang_stats['CIDEr'],
-      ['ROUGE_L']= lang_stats['ROUGE_L'],
-      ['METEOR'] = lang_stats['METEOR'],
-      ['Bleu_1'] = lang_stats['Bleu_1'],
-      ['Bleu_2'] = lang_stats['Bleu_2'],
-      ['Bleu_3'] = lang_stats['Bleu_3'],
-      ['Bleu_4'] = lang_stats['Bleu_4'],
-    }
+    if lang_stats then
+      logger_tst:add{
+        ['time'] = elapsed_tst,
+        ['iter'] = iter,
+        ['epoch']= epoch,
+        ['loss'] = val_loss,
+        ['CIDEr']  = lang_stats['CIDEr'],
+        ['ROUGE_L']= lang_stats['ROUGE_L'],
+        ['METEOR'] = lang_stats['METEOR'],
+        ['Bleu_1'] = lang_stats['Bleu_1'],
+        ['Bleu_2'] = lang_stats['Bleu_2'],
+        ['Bleu_3'] = lang_stats['Bleu_3'],
+        ['Bleu_4'] = lang_stats['Bleu_4'],
+      }
+    else
+      logger_tst:add{
+        ['time'] = elapsed_tst,
+        ['iter'] = iter,
+        ['epoch']= epoch,
+        ['loss'] = val_loss,
+      }
+    end
   end
 
   -- stopping criterions

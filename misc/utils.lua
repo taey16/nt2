@@ -12,6 +12,45 @@ function utils.getopt(opt, key, default_value)
   return v
 end
 
+function get_val()
+  local file = io.open '/storage/ImageNet/ILSVRC2012/val_synset.txt'
+  local image_list ={}
+  local label_list ={}
+  local synset_list={}
+
+  while true do
+    local line = file:read()
+    if not line then break end
+    local item  =string.split(line, ' ')
+    local synset=string.split(item[1], '/')
+    table.insert(image_list, item[1])
+    table.insert(label_list, item[2])
+    table.insert(synset_list,synset[1])
+  end
+  file:close()
+  return image_list, label_list, synset_list
+end
+
+
+function utils.read_text(path)
+  local file = io.open(path, 'r')
+  local image_list = {}
+  local sentence_list = {}
+  local roi_list = {}
+
+  while true do
+    local line = file:read()
+    if not line then break end
+    local item = string.split(line, ';;')
+    local filename = item[1]
+    local roi = string.split(item[2], ' ')
+    local sentence = string.split(item[3], ' ')
+    table.insert(image_list, filename)
+    table.insert(roi_list, roi)
+    table.insert(sentence_list, sentence)
+  end
+
+end
 function utils.read_json(path)
   local file = io.open(path, 'r')
   local text = file:read()
