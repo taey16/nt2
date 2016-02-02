@@ -3,6 +3,7 @@ require 'cunn'
 require 'cudnn'
 
 local utils = require 'misc.utils'
+local image_utils = require 'misc.image_utils' 
 local net_utils = {}
 
 
@@ -117,6 +118,9 @@ function net_utils.preprocess_inception7(imgs, crop_size, data_augment, on_gpu)
     -- crop.
     imgs = imgs[{ {}, {}, {yoff,yoff+cnn_input_size-1}, {xoff,xoff+cnn_input_size-1} }]
   end
+  
+  imgs = image_utils.random_flip(imgs)
+  imgs = torch.div(imgs:float(), 255.0)
   if not net_utils.inception7_mean_std then
     net_utils.inception7_mean = 
       -- for inception7~ResCeption
@@ -129,7 +133,6 @@ function net_utils.preprocess_inception7(imgs, crop_size, data_augment, on_gpu)
       -- for inception-v3-2015-12-05
       torch.FloatTensor{0.22682182875849, 0.22206057852892, 0.22145828935297}
   end
-  imgs = torch.div(imgs:float(), 255.0)
   for c=1,3 do
     imgs[{{},{c},{},{}}]:add(-net_utils.inception7_mean[c])
     imgs[{{},{c},{},{}}]:div(net_utils.inception7_std[c])
