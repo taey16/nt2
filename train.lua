@@ -119,6 +119,7 @@ local function eval_split(split, evalopt)
   loader:resetIterator(split) -- rewind iteator back to first datapoint in the split
   local n = 0
   local loss_sum = 0
+  local logprobs_sum = 0
   local perplexity = 0
   local loss_evals = 0
   local predictions = {}
@@ -143,8 +144,8 @@ local function eval_split(split, evalopt)
     local logprobs = protos.lm:forward{expanded_feats, data.labels}
     local loss = protos.crit:forward(logprobs, data.labels)
     loss_sum = loss_sum + loss
+    --logprobs_sum = logprobs_sum + logprobs
     loss_evals = loss_evals + 1
-    perplexity = -cephes.log2(loss)
 
     -- forward the model to also get generated samples for each image
     local seq = protos.lm:sample(feats)
@@ -169,7 +170,8 @@ local function eval_split(split, evalopt)
     if n >= val_images_use then break end -- we've used enough images
   end
 
-  perplexity = cephes.pow(2.0, perplexity / opt.seq_per_img / loss_evals)
+  --perplexity = -cephes.log2(logprobs_sum)
+  --perplexity = cephes.pow(2.0, perplexity / loss_evals)
 
   local lang_stats
   if opt.language_eval == 1 then
@@ -219,7 +221,8 @@ local function lossFun(finetune_cnn)
   -- forward the language model criterion
   local loss = protos.crit:forward(logprobs, data.labels)
   -- compute perplexity
-  local perplexity = cephes.pow(2.0, -cephes.log2(loss) / opt.batch_size)
+  --local perplexity = cephes.pow(2.0, -cephes.log2(logprobs) / opt.batch_size)
+  local perplexity = 0
   
   -----------------------------------------------------------------------------
   -- Backward pass
