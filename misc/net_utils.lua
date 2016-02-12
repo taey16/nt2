@@ -117,7 +117,7 @@ function net_utils.preprocess_inception7(imgs, crop_size, data_augment, on_gpu)
     -- crop.
     imgs = imgs[{ {}, {}, {yoff,yoff+cnn_input_size-1}, {xoff,xoff+cnn_input_size-1} }]
   end
-  --imgs = image_utils.random_flip(imgs)
+  imgs = image_utils.random_flip(imgs)
   imgs = torch.div(imgs:float(), 255.0)
   for c=1,3 do
     imgs[{{},{c},{},{}}]:add(-net_utils.inception7_mean[c])

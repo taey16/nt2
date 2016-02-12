@@ -116,11 +116,15 @@ function layer:sample(imgs, opt)
 
     local xt, it, sampleLogprobs
     if t == 1 then
-      -- feed in the images
+      -- feed in the images at first (at once)
       xt = imgs
     elseif t == 2 then
       -- feed in the start tokens
+      -- start token always id of self.vocab_size+1
+      -- it: batch_size x 1
       it = torch.LongTensor(batch_size):fill(self.vocab_size+1)
+      -- embedding self.vocab_size+2 -> input_encoding_size
+      -- xt: batch_size x input_encoding_size
       xt = self.lookup_table:forward(it)
     else
       -- take predictions from previous time step and feed them in
@@ -268,6 +272,7 @@ function layer:sample_beam(imgs, opt)
 
       local inputs = {xt,unpack(state)}
       local out = self.core:forward(inputs)
+      print(out:size())
       logprobs = out[self.num_state+1] -- last element is the output vector
       state = {}
       for i=1,self.num_state do table.insert(state, out[i]) end

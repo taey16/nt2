@@ -157,11 +157,14 @@ def encode_captions(imgs, wtoi, _max_length):
   sys.stdout.flush()
   return L, label_start_ix, label_end_ix, label_length
 
-def main(filename):
+def main(params):
 
+  filename = params['input_filename']
   image_caption = [entry.strip().split(';;') for entry in open(filename, 'r')]
-  seed(123) # make reproducible
-  shuffle(image_caption) # shuffle the order
+  # make reproducible
+  seed(123)
+  # shuffle the order
+  shuffle(image_caption)
 
   imgs = []
   for item in image_caption:
@@ -175,23 +178,23 @@ def main(filename):
   prepro_captions(imgs)
 
   # create the vocab
-  #import pdb; pdb.set_trace()
-  word_count_threshold = 5
-  vocab, max_length = build_vocab(imgs, word_count_threshold)
-  itow = {i+1:w for i,w in enumerate(vocab)} # a 1-indexed vocab translation table
-  wtoi = {w:i+1 for i,w in enumerate(vocab)} # inverse table
+  vocab, max_length = build_vocab(imgs, params['word_count_threshold'])
+  # a 1-indexed vocab translation table
+  itow = {i+1:w for i,w in enumerate(vocab)}
+  # inverse table
+  wtoi = {w:i+1 for i,w in enumerate(vocab)}
 
   # assign the splits
-  num_val = 4000
   num_test = 0
-  assign_splits(imgs, num_val, num_test)
+  assign_splits(imgs, params['num_val'], num_test)
   
   # encode captions in large arrays, ready to ship to hdf5 file
-  L, label_start_ix, label_end_ix, label_length = encode_captions(imgs, wtoi, max_length)
+  L, label_start_ix, label_end_ix, label_length = \
+    encode_captions(imgs, wtoi, max_length)
 
   # create output h5 file
-  output_h5 = '/storage/freebee/tshirts_excel_1453264869210.csv.image_sentence.txt.h5'
-  image_dim = 342
+  output_h5 = params['output_h5']
+  image_dim = params['image_dim']
   N = len(imgs)
   f = h5py.File(output_h5, "w")
   f.create_dataset("labels", dtype='uint32', data=L)
@@ -212,7 +215,8 @@ def main(filename):
     if len(Ir.shape) == 2:
       Ir = Ir[:,:,np.newaxis]
       Ir = np.concatenate((Ir,Ir,Ir), axis=2)
-    # and swap order of axes from (params['image_dim'],params['image_dim'],3) to (3,params['image_dim'],params['image_dim'])
+    # and swap order of axes from (params['image_dim'],params['image_dim'],3) to 
+    # (3,params['image_dim'],params['image_dim'])
     Ir = Ir.transpose(2,0,1)
     # write to h5
     dset[i] = Ir
@@ -235,13 +239,41 @@ def main(filename):
     
     out['images'].append(jimg)
   
-  output_json = '/storage/freebee/tshirts_excel_1453264869210.csv.image_sentence.txt.json'
+  output_json = params['output_json']
   json.dump(out, open(output_json, 'w'))
   print 'wrote ', 'output_json'
+  print 'end of building image-atrribute sentence'
   sys.stdout.flush()
 
 if __name__ == "__main__":
 
-  input_filename = '/storage/freebee/tshirts_excel_1453264869210.csv.image_sentence.txt'
-  main(input_filename)
+  parser = argparse.ArgumentParser()
+
+  parser.add_argument('--input_filename', default= \
+    #'/storage/freebee/tshirts_shirts_blous.image_sentence.txt',
+    '/storage/freebee/tshirts_shirts.image_sentence.txt',
+    #/storage/freebee/tshirts_excel_1453264869210.csv.image_sentence.txt,
+    help='number of images to assign to validation data (for CV etc)')
+  parser.add_argument('--num_val', default=5000, type=int, 
+    help='number of images to assign to validation data (for CV etc)')
+  parser.add_argument('--output_json', default= \
+    #'/storage/freebee/tshirts_shirts_blous.image_sentence.txt.json', 
+    '/storage/freebee/tshirts_shirts.image_sentence.txt.json',
+    #'/storage/freebee/tshirts.image_sentence.txt.json',
+    help='output json file')
+  parser.add_argument('--output_h5', default= \
+    #'/storage/freebee/tshirts_shirts_blous.image_sentence.txt.h5', 
+    '/storage/freebee/tshirts_shirts.image_sentence.txt.h5',
+    #'/storage/freebee/tshirts.image_sentence.txt.h5',
+    help='output h5 file')
+  parser.add_argument('--word_count_threshold', default=5, type=int, 
+    help='only words that occur more than this number of times will be put in vocab')
+  parser.add_argument('--image_dim', default=342, type=int, help='size of image')
+
+  args = parser.parse_args()
+  # convert to ordinary dict
+  params = vars(args)
+  print 'parsed input params:'
+  print json.dumps(params, indent=2)
+  main(params)
 

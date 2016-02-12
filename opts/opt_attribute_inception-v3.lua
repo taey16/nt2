@@ -1,16 +1,19 @@
 
 local input_h5 = 
-  '/storage/freebee/tshirts_excel_1453264869210.csv.image_sentence.txt.h5'
+  '/storage/freebee/tshirts_shirts.image_sentence.txt.h5'
+  --'/storage/freebee/tshirts_excel_1453264869210.csv.image_sentence.txt.h5'
 local input_json = 
-  '/storage/freebee/tshirts_excel_1453264869210.csv.image_sentence.txt.json'
+  '/storage/freebee/tshirts_shirts.image_sentence.txt.json'
+  --'/storage/freebee/tshirts_excel_1453264869210.csv.image_sentence.txt.json'
+local total_samples_train = 74716
+local total_samples_valid = 5000
 
 local torch_model= 
   '/storage/ImageNet/ILSVRC2012/torch_cache/inception-v3-2015-12-05/digits_gpu2_inception-v3-2015-12-05_Sat_Jan_30_17_16_06_2016/model_16.bn_removed.t7'
-  --'/storage/ImageNet/ILSVRC2012/torch_cache/inception-v3-2015-12-05/digits_gpu2_inception-v3-2015-12-05_Wed_Jan_27_22_47_34_2016/model_10.bn_removed.t7'
 local image_size = 342
 local crop_size = 299
 local rnn_size = 256
-local num_rnn_layers = 1
+local num_rnn_layers = 2
 local input_encoding_size = 2048
 local batch_size = 16
 
@@ -22,7 +25,9 @@ local cnn_weight_decay = 0.0000001
 local start_from = 
   ''
 local experiment_id = 
-  '_inception-v3-2015-12-05_bn_removed_epoch16_bs16_embedding2048_encode256_layer1_lr4e-4'
+  '_inception-v3-2015-12-05_bn_removed_epoch16_bs16_embedding2048_encode128_layer3_lr4e-4'
+local checkpoint_path = 
+  '/storage/attribute/checkpoints/tshirts_shirts/'
 
 cmd = torch.CmdLine()
 cmd:text()
@@ -99,17 +104,17 @@ cmd:option('-cnn_weight_decay', cnn_weight_decay,
   'L2 weight decay just for the CNN')
 
 -- Evaluation/Checkpointing
-cmd:option('-train_samples', 50779 - 4000,
+cmd:option('-train_samples', total_samples_train - total_samples_valid,
   '# of samples in training set')
-cmd:option('-val_images_use', 4000, 
+cmd:option('-val_images_use',total_samples_valid,
   'how many images to use when periodically evaluating the validation loss? (-1 = all)')
-cmd:option('-save_checkpoint_every', math.floor((50779 - 4000) / batch_size /4.0), 
+cmd:option('-save_checkpoint_every', math.floor((total_samples_train - total_samples_valid) / batch_size /4.0), 
   'how often to save a model checkpoint?')
-cmd:option('-checkpoint_path', '/storage/attribute/checkpoints', 
+cmd:option('-checkpoint_path', checkpoint_path, 
   'folder to save checkpoints into (empty = this folder)')
 cmd:option('-language_eval', 0, 
   'Evaluate language as well (1 = yes, 0 = no)? BLEU/CIDEr/METEOR/ROUGE_L? requires coco-caption code from Github.')
-cmd:option('-losses_log_every', 25, 
+cmd:option('-losses_log_every', 0, 
   'How often do we snapshot losses (in loss_history), for inclusion in the progress dump? (0 = disable)')
 
 -- misc

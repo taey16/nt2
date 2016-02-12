@@ -15,7 +15,8 @@ require 'optim'
 require 'cephes' -- for cephes.log2
 
 
-local opt = paths.dofile('opts/opt_attribute_inception-v3.lua')
+local opt = paths.dofile('opts/opt_attribute_tshirts_shirts_blous_inception-v3.lua')
+--local opt = paths.dofile('opts/opt_attribute_inception-v3.lua')
 --local opt = paths.dofile('opts/opt_coco_inception-v3.lua')
 --local opt = paths.dofile('opts/opt_coco_inception7.lua')
 --local opt = paths.dofile('opts/opt_coco_vgg.lua')
@@ -30,7 +31,7 @@ local loader = DataLoader{h5_file = opt.input_h5, json_file = opt.input_json}
 local protos = {}
 if string.len(opt.start_from) > 0 then
   -- load protos from file
-  print('initializing weights from ' .. opt.start_from)
+  io.flush(print('initializing weights from ' .. opt.start_from))
   local loaded_checkpoint = torch.load(opt.start_from)
   protos = loaded_checkpoint.protos
   net_utils.unsanitize_gradients(protos.cnn)
@@ -154,7 +155,9 @@ local function eval_split(split, evalopt)
       local entry = {image_id = data.infos[k].id, file_path = data.infos[k].file_path, caption = sents[k]}
       table.insert(predictions, entry)
       if verbose then
-        print(string.format('image %s(%s): %s', entry.image_id, entry.file_path, entry.caption))
+        io.flush(print(string.format(
+          'image %s(%s): %s', entry.image_id, entry.file_path, entry.caption
+        )))
       end
     end
 
@@ -162,7 +165,9 @@ local function eval_split(split, evalopt)
     local ix0 = data.bounds.it_pos_now
     local ix1 = math.min(data.bounds.it_max, val_images_use)
     if verbose then
-      print(string.format('evaluating validation performance... %d/%d (%f)', ix0-1, ix1, loss))
+      io.flush(print(string.format(
+        'evaluating validation performance... %d/%d (%f)', ix0-1, ix1, loss
+      )))
     end
 
     if loss_evals % 10 == 0 then collectgarbage() end
@@ -352,7 +357,9 @@ while true do
     local val_loss, val_predictions, lang_stats, perplexity = 
       eval_split('val', {val_images_use = opt.val_images_use})
     local elapsed_tst = tm:time().real
-    print(string.format('validation loss: %f, perplexity: %f', val_loss, perplexity))
+    io.flush( print(string.format(
+        'validation loss: %f, perplexity: %f', val_loss, perplexity
+    )))
     --print(lang_stats)
     val_loss_history[iter] = val_loss
     if lang_stats then
@@ -373,7 +380,9 @@ while true do
     checkpoint.val_lang_stats_history = val_lang_stats_history
 
     utils.write_json(checkpoint_path .. '.json', checkpoint)
-    print('wrote json checkpoint to ' .. checkpoint_path .. '.json')
+    io.flush(print(
+      'wrote json checkpoint to ' .. checkpoint_path .. '.json'
+    ))
 
     -- write the full model checkpoint as well if we did better than ever
     local current_score
@@ -396,7 +405,9 @@ while true do
         -- alone to run on arbitrary images without the data loader
         checkpoint.vocab = loader:getVocab()
         torch.save(checkpoint_path .. '.t7', checkpoint)
-        print('wrote checkpoint to ' .. checkpoint_path .. '.t7')
+        io.flush(print(
+          'wrote checkpoint to ' .. checkpoint_path .. '.t7'
+        ))
       end
     end
     if lang_stats then
@@ -428,7 +439,9 @@ while true do
   if iter % 10 == 0 then collectgarbage() end -- good idea to do this once in a while, i think
   if loss0 == nil then loss0 = losses.total_loss end
   if losses.total_loss > loss0 * 20 then
-    print('loss seems to be exploding, quitting.')
+    io.flush(print(
+      'loss seems to be exploding, quitting.'
+    ))
     break
   end
   if opt.max_iters > 0 and iter >= opt.max_iters then break end -- stopping criterion
