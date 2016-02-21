@@ -32,6 +32,7 @@ return cnn_part
 
 # Misc.
 - our BN-inception7-Residual net: [inception7_residual.lua](https://github.com/taey16/image-encoder/blob/master/models/inception7_residual.lua), [inception_modules.lua](https://github.com/taey16/image-encoder/blob/master/models/inception_module.lua)
+- The exact reproduce of inception-v3: [inception-v3](https://github.com/taey16/image-encoder/blob/master/models/inception_v3.lua)
 
 We welcome to any questions, discussion, issues. 
 (taey1600@gmail.com)
