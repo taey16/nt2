@@ -11,28 +11,15 @@ We trained LSTM at first, and then finetuned CNN as well(we got about 0.02 point
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_loss_inception-v3_embedding2048_hidden384_layer3.png)
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_CIDEr_inception-v3_embedding2048_hidden384_layer3.png)
 
-1. We first used inception-v3, residual style networks not vgg. 
-2. We removed random embedding(projection)
+1. We used inception-v3-residual net not vgg. 
+2. [We removed random embedding(projection)](https://github.com/taey16/nt2/blob/master/misc/net_utils.lua#L28-32)
 3. We used 3 layered deep LSTM
-```Shell
--- net_utils.build_inception_cnn(opt) in misc/net_utils.lua
-local cnn_part = nn.Sequential()
-cnn_part:add(vision_encoder)
-cnn_part:add(nn.View(2048))
--- remove random embedding(projection)
---cnn_part:add(nn.Linear(2048,encoding_size))
---cnn_part:add(cudnn.ReLU(true))
-print(cnn_part)
-print('===> Loading pre-trained inception7 model complete')
-return cnn_part 
-```
 
 # Acknowledgements
 - Karpathy's great works [neuraltalk2](https://github.com/karpathy/neuraltalk2),[neuraltalk](https://github.com/karpathy/neuraltalk)
 
 # Misc.
-- our BN-inception7-Residual net: [inception7_residual.lua](https://github.com/taey16/image-encoder/blob/master/models/inception7_residual.lua), [inception_modules.lua](https://github.com/taey16/image-encoder/blob/master/models/inception_module.lua)
-- The exact reproduce of inception-v3: [inception-v3](https://github.com/taey16/image-encoder/blob/master/models/inception_v3.lua)
+- our Inception-Residual net: [resception.lua](https://github.com/taey16/image-encoder/blob/master/models/resception.lua), [inception_modules.lua](https://github.com/taey16/image-encoder/blob/master/models/inception_module.lua), [inception-v3.lua](https://github.com/taey16/image-encoder/blob/master/models/inception_v3.lua)
 
 We welcome to any questions, discussion, issues. 
 (taey1600@gmail.com)
