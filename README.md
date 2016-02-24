@@ -12,7 +12,7 @@ We trained LSTM at first, and then finetuned CNN as well(we got about 0.02 point
 ![alt tag](https://github.com/taey16/nt2/blob/master/logs/nt2_CIDEr_inception-v3_embedding2048_hidden384_layer3.png)
 
 1. We used inception-v3-residual net not vgg. 
-2. [We removed random embedding(projection)](https://github.com/taey16/nt2/blob/master/misc/net_utils.lua#L28-32)
+2. [We removed random embedding(projection)](https://github.com/taey16/nt2/blob/master/misc/net_utils.lua#L28-L32)
 3. We used 3 layered deep LSTM
 
 # Acknowledgements
