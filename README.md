@@ -1,3 +1,5 @@
+
+# We moved to other rep. (https://github.com/taey16/vision_language)
 # nt2
 - Modification of [neuraltalk2](https://github.com/karpathy/neuraltalk2)
 
