@@ -13,7 +13,7 @@ We trained LSTM at first, and then finetuned CNN as well(we got about 0.02 point
 
 1. We used inception-v3-residual net not vgg. 
 2. [We removed random embedding(projection)](https://github.com/taey16/nt2/blob/master/misc/net_utils.lua#L28-L32)
-3. We used 3 layered deep LSTM
+3. [We used 3 layered deep LSTM](https://github.com/taey16/nt2/blob/master/models/LanguageModel.lua#23)
 
 # Acknowledgements
 - Karpathy's great works [neuraltalk2](https://github.com/karpathy/neuraltalk2),[neuraltalk](https://github.com/karpathy/neuraltalk)
