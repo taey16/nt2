@@ -23,5 +23,3 @@ We trained LSTM at first, and then finetuned CNN as well(we got about 0.02 point
 # Misc.
 - our Inception-Residual net: [resception.lua](https://github.com/taey16/image-encoder/blob/master/models/resception.lua), [inception_modules.lua](https://github.com/taey16/image-encoder/blob/master/models/inception_module.lua), [inception-v3.lua](https://github.com/taey16/image-encoder/blob/master/models/inception_v3.lua)
 
-We welcome to any questions, discussion, issues. 
-(taey1600@gmail.com)
